@@ -3,7 +3,7 @@ class Interpreter {
 	constructor(turtle) {
 		this.turtle = turtle;
 		this.commands = [];
-		initCommands();
+		this.initCommands();
 	}
 	
 	addCommand(symbol, command) {
@@ -11,34 +11,38 @@ class Interpreter {
 	}
 	
 	initCommands() {
-		addCommand('F', this.turtle.moveForward);
-		addCommand('f', this.turtle.moveForwardWithoutDrawing);
-		addCommand('+', this.turtle.turnLeft);
-		addCommand('-', this.turtle.turnRight);
-		addCommand('∧', this.turtle.pitchUp);
-		addCommand('^', this.turtle.pitchUp);
-		addCommand('&', this.turtle.pitchDown);
-		addCommand('\\', this.turtle.rollLeft);
-		addCommand('/', this.turtle.rollRight);
-		addCommand('|', this.turtle.turnAround);
-		addCommand('$', this.turtle.rotateVertical);
-		addCommand('[', this.turtle.startBranch);
-		addCommand(']', this.turtle.completeBranch);
-		addCommand('{', this.turtle.startPolygon);
-		addCommand('G', this.turtle.moveForwardWithoutRecord);
-		addCommand('.', this.turtle.recordVertex);
-		addCommand('}', this.turtle.completePolygon);
-		addCommand('∼', this.turtle.incorporateSurface);
-		addCommand('!', this.turtle.decrementDiameter);
-		addCommand('', this.turtle.incrementColor);
-		addCommand('\'', this.turtle.incrementColor);
-		addCommand('%', this.turtle.cutOffRemainderBranch);
+		const t = this.turtle;
+		this.addCommand('F', t.moveForward.bind(t));
+		this.addCommand('f', t.moveForwardWithoutDrawing.bind(t));
+		this.addCommand('+', t.turnLeft.bind(t));
+		this.addCommand('-', t.turnRight.bind(t));
+		this.addCommand('∧', t.pitchUp.bind(t));
+		this.addCommand('^', t.pitchUp.bind(t));
+		this.addCommand('&', t.pitchDown.bind(t));
+		this.addCommand('\\', t.rollLeft.bind(t));
+		this.addCommand('/', t.rollRight.bind(t));
+		this.addCommand('|', t.turnAround.bind(t));
+		this.addCommand('$', t.rotateVertical.bind(t));
+		this.addCommand('[', t.startBranch.bind(t));
+		this.addCommand(']', t.completeBranch.bind(t));
+		this.addCommand('{', t.startPolygon.bind(t));
+		this.addCommand('G', t.moveForwardWithoutRecord.bind(t));
+		this.addCommand('.', t.recordVertex.bind(t));
+		this.addCommand('}', t.completePolygon.bind(t));
+		this.addCommand('∼', t.incorporateSurface.bind(t));
+		this.addCommand('!', t.decrementDiameter.bind(t));
+		this.addCommand('', t.incrementColor.bind(t));
+		this.addCommand('\'', t.incrementColor.bind(t));
+		this.addCommand('%', t.cutOffRemainderBranch.bind(t));
 	}
+
 	
 	execute(word) {
+		console.log(word);
 		for (const symbol of word) {
 			this.commands[symbol]();
 		}
+		return this.turtle.mesh;
 	}
 
 }
