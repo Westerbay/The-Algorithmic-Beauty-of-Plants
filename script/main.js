@@ -9,13 +9,13 @@ function addRule(symbol="", mutation="") {
 	const inputSymbol = document.createElement("input");
 	inputSymbol.type = "text";
 	inputSymbol.maxLength = 1;
-	inputSymbol.placeholder = "Symbol";
+	inputSymbol.placeholder = "F";
 	inputSymbol.value = symbol;
 	inputSymbol.required = true;
 	
 	const inputMutation = document.createElement("input");
 	inputMutation.type = "text";
-	inputMutation.placeholder = "Mutation";
+	inputMutation.placeholder = "FF-[-F+F+F]+[+F-F-F]";
 	inputMutation.value = mutation;
 	inputMutation.required = true;
 	
@@ -27,6 +27,7 @@ function addRule(symbol="", mutation="") {
 	
 	row.appendChild(inputSymbol);
 	row.appendChild(inputMutation);
+	row.appendChild(removeBtn);
 	rulesContainer.appendChild(row);
 }
 
@@ -65,11 +66,11 @@ function main() {
 	var canvasGL = new CanvasGL(mesh);
 	
 	addRule("F", "FF-[-F+F+F]+[+F-F-F]");
+	document.getElementById("toggleSidebar").addEventListener("click", function () {
+		document.getElementById("layout").classList.toggle("collapsed");
+	});
 }
 
 main();
-document.getElementById("toggleSidebar").addEventListener("click", function () {
-  document.getElementById("layout").classList.toggle("collapsed");
-});
 
 

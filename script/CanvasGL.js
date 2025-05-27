@@ -107,7 +107,6 @@ class CanvasGL {
 	}
 
 	computeCameraMatrix(width, height) {
-		console.log(width);
 		const aspectRatio = width / height;
 		const projection = mat4.create();
 		mat4.perspective(
