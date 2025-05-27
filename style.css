@@ -1,0 +1,122 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+#layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: 100vh;
+  transition: all 0.3s ease;
+}
+
+#layout.collapsed {
+  grid-template-columns: 0 1fr;
+}
+
+#sidebar {
+  background-color: #ffffff;
+  padding: 1em;
+  border-right: 1px solid #ccc;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+#toggleSidebar {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 0.6em;
+  margin-bottom: 1em;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+aside {
+  display: flex;
+  flex-direction: column;
+}
+
+input, select, button {
+  padding: 0.5em;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button.add-btn {
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+}
+
+button.remove-btn {
+  background: none;
+  border: none;
+  color: #c00;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.rule-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.3em;
+}
+
+.rule-row input:first-child {
+  width: 50px;
+}
+
+.rule-row input:last-child {
+  flex: 1;
+}
+
+.color-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.color-item {
+  display: flex;
+  align-items: center;
+  background-color: #eee;
+  padding: 0.2em 0.4em;
+  border-radius: 5px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
+}
+
+.color-box {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  margin-right: 0.3em;
+  border: 1px solid #999;
+}
+
+#glcanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+

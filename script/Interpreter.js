@@ -38,7 +38,6 @@ class Interpreter {
 
 	
 	execute(word) {
-		console.log(word);
 		for (const symbol of word) {
 			this.commands[symbol]();
 		}
