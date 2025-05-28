@@ -2,6 +2,8 @@ const rulesContainer = document.getElementById("rulesContainer");
 const colorStack = document.getElementById("colorStack");
 const colorInput = document.getElementById("newColor");
 
+const canvasGL = new CanvasGL();
+
 function addRule(symbol="", mutation="") {
 	const row = document.createElement("div");
 	row.className = "rule-row";
@@ -50,25 +52,47 @@ function addColor() {
 	colorStack.appendChild(item);
 }
 
+function draw(generation, length, angleRotation, axiom, rules, colors) {
+	var lSystem = new LSystem(axiom, rules);
+	var turtleState = new TurtleState(length * 0.01, vec3.fromValues(0, 0, 0), 0);
+	
+	var turtle = new Turtle(turtleState, angleRotation, colors);
+	var interpreter = new Interpreter(turtle);
+	var mesh = interpreter.execute(lSystem.wordAtGeneration(generation));
+	canvasGL.loadBuffers(mesh);	
+}
+
 function main() {
 	document.getElementById("abop").addEventListener("submit", function (e) {
 		e.preventDefault();
-	});
-
-	var rules = new Rules();
-	rules.addSimpleRule('F', "FF-[-F+F+F]+[+F-F-F]");
-	var lSystem = new LSystem("F", rules);
-	var turtleState = new TurtleState(0.03, 22.5, vec3.fromValues(0, 0, 0));
-	
-	var turtle = new Turtle(turtleState);
-	var interpreter = new Interpreter(turtle);
-	var mesh = interpreter.execute(lSystem.wordAtGeneration(5));	
-	var canvasGL = new CanvasGL(mesh);
+		
+		const generation = parseInt(document.getElementById("generation").value, 10);
+		const length = parseFloat(document.getElementById("length").value);
+		const angleRotation = parseFloat(document.getElementById("angle").value);
+		const axiom = document.getElementById("axiom").value;
+		
+		const rules = new Rules();
+		document.querySelectorAll("#rulesContainer .rule-row").forEach(row => {
+			const inputs = row.querySelectorAll("input");
+			if (inputs.length >= 2) {
+				const symbol = inputs[0].value.trim();
+				const mutation = inputs[1].value.trim();
+				if (symbol && mutation) {
+					rules.addSimpleRule(symbol, mutation);
+				}
+			}
+		});
+		
+		draw(generation, length, angleRotation, axiom, rules, []);
+	});	
 	
 	addRule("F", "FF-[-F+F+F]+[+F-F-F]");
-	document.getElementById("toggleSidebar").addEventListener("click", function () {
-		document.getElementById("layout").classList.toggle("collapsed");
-	});
+	
+	var rules = new Rules();
+	rules.addSimpleRule('F', "FF-[-F+F+F]+[+F-F-F]"); 
+	draw(5, 3, 22.5, "F", rules, []);
+	
+	canvasGL.startRenderLoop();
 }
 
 main();

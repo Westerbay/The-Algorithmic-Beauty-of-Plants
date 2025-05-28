@@ -1,6 +1,6 @@
 class CanvasGL {
 
-	constructor(mesh) {
+	constructor() {
 		const canvas = document.getElementById("glcanvas");
 		this.gl = canvas.getContext("webgl");
 
@@ -9,11 +9,7 @@ class CanvasGL {
 			return;
 		}
 		
-		this.position = vec3.fromValues(0, 1.60, 5);
-		this.mesh = mesh;
 		this.initShader();
-		this.createBuffers();	
-		this.startRenderLoop();
 	}
 	
 	initShader() {
@@ -55,10 +51,12 @@ class CanvasGL {
 		return shader;
 	}
 	
-	createBuffers() {
+	loadBuffers(mesh) {
+	
 		const gl = this.gl;
-		const vertices = this.mesh.getVertexBuffer();
-
+		const vertices = mesh.getVertexBuffer();
+	
+		this.position = vec3.fromValues(mesh.centerX(), mesh.centerY(), 5);	
 		this.vertexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
@@ -100,9 +98,9 @@ class CanvasGL {
 		const displayWidth = canvas.clientWidth;
 		const displayHeight = canvas.clientHeight;
 
-		if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-			canvas.width = displayWidth;
-			canvas.height = displayHeight;
+		if (canvas.width * 2 !== displayWidth || canvas.height * 2 !== displayHeight) {
+			canvas.width = 2 * displayWidth;
+			canvas.height = 2 * displayHeight;
 		}
 	}
 

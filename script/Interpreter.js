@@ -39,7 +39,9 @@ class Interpreter {
 	
 	execute(word) {
 		for (const symbol of word) {
-			this.commands[symbol]();
+			if (symbol in this.commands) {
+				this.commands[symbol]();
+			}
 		}
 		return this.turtle.mesh;
 	}

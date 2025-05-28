@@ -1,7 +1,9 @@
 class Turtle {
 
-	constructor(turtleState) {
+	constructor(turtleState, angleRotationDegree, colors) {
 		this.turtleState = turtleState;
+		this.colors = colors;
+		this.angleRotation = this.degToRad(angleRotationDegree);
 		this.mesh = new Mesh();
 		this.states = [];
 	}
@@ -21,9 +23,9 @@ class Turtle {
 		vec3.add(this.turtleState.position, this.turtleState.position, delta);
 	}
 	
-	turnLeft() {
-		const cosAlpha = Math.cos(this.turtleState.angleRotation);
-		const sinAlpha = Math.sin(this.turtleState.angleRotation)
+	turn(angleRotation) {
+		const cosAlpha = Math.cos(angleRotation);
+		const sinAlpha = Math.sin(angleRotation);
 		const R = mat3.fromValues(
 			cosAlpha, sinAlpha, 0,
 			-sinAlpha, cosAlpha, 0,
@@ -31,16 +33,13 @@ class Turtle {
 		);
 		mat3.multiply(this.turtleState.orientation, this.turtleState.orientation, R);
 	}
+	
+	turnLeft() {
+		this.turn(this.angleRotation);
+	}
 
 	turnRight() {
-		const cosAlpha = Math.cos(-this.turtleState.angleRotation);
-		const sinAlpha = Math.sin(-this.turtleState.angleRotation)
-		const R = mat3.fromValues(
-			cosAlpha, sinAlpha, 0,
-			-sinAlpha, cosAlpha, 0,
-			0, 0, 1
-		);
-		mat3.multiply(this.turtleState.orientation, this.turtleState.orientation, R);
+		this.turn(-this.angleRotation);
 	}
 
 	pitchUp() {
@@ -91,6 +90,10 @@ class Turtle {
 	}
 	
 	cutOffRemainderBranch() {
+	}
+	
+	degToRad(deg) {
+		return deg * Math.PI / 180;
 	}
 	
 }
