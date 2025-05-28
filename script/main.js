@@ -128,6 +128,7 @@ function main() {
 	canvasGL.startRenderLoop();
 }
 
-main();
+document.addEventListener("DOMContentLoaded", main);
+
 
 
