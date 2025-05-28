@@ -2,13 +2,14 @@ class Mesh {
 
 	constructor() {
 		this.vertices = [];
+		this.colorIndices = [];
 		this.minX = Infinity;
 		this.maxX = -Infinity;
 		this.minY = Infinity;
 		this.maxY = -Infinity;
 	}
 	
-	addLine(start, end) {
+	addLine(start, end, colorIndex) {
 		this.minX = Math.min(this.minX, start[0], end[0]);
 		this.maxX = Math.max(this.maxX, start[0], end[0]);
 		
@@ -17,10 +18,17 @@ class Mesh {
 		
 		this.vertices.push(...start);
 		this.vertices.push(...end);
+		
+		this.colorIndices.push(colorIndex);
+		this.colorIndices.push(colorIndex);	
 	}
 	
 	getVertexBuffer() {
 		return new Float32Array(this.vertices);
+	}
+	
+	getColorIndexBuffer() {
+		return new Float32Array(this.colorIndices);
 	}
 	
 	centerX() {

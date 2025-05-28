@@ -9,21 +9,34 @@ class CanvasGL {
 			return;
 		}
 		
+		this.colors = [];
 		this.initShader();
 	}
 	
 	initShader() {
 		const vsSource = `
 			attribute vec3 aPosition;
+			attribute float aColorIndex;
+			
 			uniform mat4 cameraMatrix;
+			uniform vec3 colorStack[1000];
+			uniform int colorStackLength;
+			
+			varying vec3 fragColor;
+			
 			void main() {
+				int i = int(aColorIndex);
+				fragColor = colorStack[i];
 				gl_Position = cameraMatrix * vec4(aPosition, 1.0);
 			}
 		`;
 
 		const fsSource = `
+			precision mediump float;
+			varying vec3 fragColor;			
+			
 			void main() {
-				gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+				gl_FragColor = vec4(fragColor, 1.0);
 			}
 		`;
 		
@@ -38,6 +51,10 @@ class CanvasGL {
 		gl.useProgram(this.program);
 		
 		this.aPositionLoc = gl.getAttribLocation(this.program, "aPosition");
+		this.aColorIndexLoc = gl.getAttribLocation(this.program, "aColorIndex");
+		this.cameraMatrixLocation = gl.getUniformLocation(this.program, "cameraMatrix");
+		this.colorStackLocation = gl.getUniformLocation(this.program, "colorStack");
+		this.colorStackLengthLocation = gl.getUniformLocation(this.program, "colorStackLength");
 	}
 	
 	compileShader(src, type) {
@@ -51,15 +68,25 @@ class CanvasGL {
 		return shader;
 	}
 	
-	loadBuffers(mesh) {
-	
+	loadMesh(mesh) {	
 		const gl = this.gl;
 		const vertices = mesh.getVertexBuffer();
-	
+		const colorIndices = mesh.getColorIndexBuffer();
+		
 		this.position = vec3.fromValues(mesh.centerX(), mesh.centerY(), 5);	
+		
 		this.vertexBuffer = gl.createBuffer();
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+		gl.enableVertexAttribArray(this.aPositionLoc);
+		gl.vertexAttribPointer(this.aPositionLoc, 3, gl.FLOAT, false, 0, 0);	
+		
+		this.colorIndexBuffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorIndexBuffer);
+		gl.bufferData(gl.ARRAY_BUFFER, colorIndices, gl.STATIC_DRAW);
+		gl.enableVertexAttribArray(this.aColorIndexLoc);
+		gl.vertexAttribPointer(this.aColorIndexLoc, 1, gl.FLOAT, false, 0, 0);	
+		
 		this.vertexCount = vertices.length / 3;
 	}
 	
@@ -77,18 +104,14 @@ class CanvasGL {
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 		gl.clearColor(1, 1, 1, 1);
 		gl.clear(gl.COLOR_BUFFER_BIT);
-
-		gl.useProgram(this.program);
-
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-		gl.enableVertexAttribArray(this.aPositionLoc);
-		gl.vertexAttribPointer(this.aPositionLoc, 3, gl.FLOAT, false, 0, 0);
+		
 		const cameraMatrix = this.computeCameraMatrix(
 			gl.canvas.width,
 			gl.canvas.height
-		);
-		const cameraMatrixLocation = gl.getUniformLocation(this.program, "cameraMatrix");
-		gl.uniformMatrix4fv(cameraMatrixLocation, false, cameraMatrix);
+		); 
+		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrix);
+		gl.uniform3fv(this.colorStackLocation, this.colors);
+		gl.uniform1i(this.colorStackLengthLocation, this.colors.length);
 		
 		gl.drawArrays(gl.LINES, 0, this.vertexCount);
 	}

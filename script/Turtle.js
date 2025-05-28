@@ -1,9 +1,8 @@
 class Turtle {
 
-	constructor(turtleState, angleRotationDegree, colors) {
+	constructor(turtleState, angleRotationDegree) {
 		this.turtleState = turtleState;
-		this.colors = colors;
-		this.angleRotation = this.degToRad(angleRotationDegree);
+		this.angleRotation = this._degToRad(angleRotationDegree);
 		this.mesh = new Mesh();
 		this.states = [];
 	}
@@ -12,7 +11,7 @@ class Turtle {
 		const start = vec3.clone(this.turtleState.position);
 		this.moveForwardWithoutDrawing();
 		const end = vec3.clone(this.turtleState.position);
-		this.mesh.addLine(start, end);
+		this.mesh.addLine(start, end, this.turtleState.colorIndex);
 	}
 	
 	moveForwardWithoutDrawing() {
@@ -92,7 +91,7 @@ class Turtle {
 	cutOffRemainderBranch() {
 	}
 	
-	degToRad(deg) {
+	_degToRad(deg) {
 		return deg * Math.PI / 180;
 	}
 	
