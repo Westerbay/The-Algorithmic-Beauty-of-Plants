@@ -40,6 +40,9 @@ function addColor() {
 	colorInput.type = "color";
 	colorInput.className = "color-box";
 	colorInput.value = "#000000";
+	colorInput.addEventListener("change", () => {
+        loadColorStack();
+    });
 	
 	const removeBtn = document.createElement("button");
 	removeBtn.className = "remove-btn";
@@ -60,7 +63,7 @@ function hexToRgbGL(hex) {
 	return [r / 255, g / 255, b / 255];
 }
 
-function draw(generation, length, angleRotation, axiom, rules, colors) {
+function draw(generation, length, angleRotation, axiom, rules) {
 	var lSystem = new LSystem(axiom, rules);
 	var turtleState = new TurtleState(length * 0.01, vec3.fromValues(0, 0, 0), 0);
 	
@@ -68,12 +71,23 @@ function draw(generation, length, angleRotation, axiom, rules, colors) {
 	var interpreter = new Interpreter(turtle);
 	var mesh = interpreter.execute(lSystem.wordAtGeneration(generation));
 	
+	loadColorStack();
+	canvasGL.loadMesh(mesh);
+}
+
+function loadColorStack() {
+	const colors = [];
+	document.querySelectorAll("#colorStack .color-item").forEach(row => {
+		const inputs = row.querySelectorAll("input");
+		if (inputs.length >= 1) {
+			const color = inputs[0].value;
+			colors.push(color);
+		}
+	});
 	var colorsGL = [];
 	for (color of colors) {
 		colorsGL.push(hexToRgbGL(color));
 	}
-	
-	canvasGL.loadMesh(mesh);
 	canvasGL.colors = new Float32Array(colorsGL.flat());	
 }
 
@@ -95,16 +109,7 @@ function fetchDataAndDraw() {
 		}
 	});
 	
-	const colors = [];
-	document.querySelectorAll("#colorStack .color-item").forEach(row => {
-		const inputs = row.querySelectorAll("input");
-		if (inputs.length >= 1) {
-			const color = inputs[0].value;
-			colors.push(color);
-		}
-	});
-	
-	draw(generation, length, angleRotation, axiom, rules, colors);
+	draw(generation, length, angleRotation, axiom, rules);
 }
 
 function main() {
@@ -118,7 +123,7 @@ function main() {
 	
 	var rules = new Rules();
 	rules.addSimpleRule('F', "FF-[-F+F+F]+[+F-F-F]"); 
-	draw(5, 3, 22.5, "F", rules, ["#000000"]);
+	draw(5, 3, 22.5, "F", rules);
 	
 	canvasGL.startRenderLoop();
 }
