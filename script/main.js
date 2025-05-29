@@ -1,136 +1,50 @@
-const rulesContainer = document.getElementById("rulesContainer");
-const colorStack = document.getElementById("colorStack");
-const generationInput = document.getElementById("generation");
-const lengthInput = document.getElementById("length");
-const angleInput = document.getElementById("angle");
-const axiomInput = document.getElementById("axiom");
+const presets = [];
 
-const canvasGL = new CanvasGL();
-
-function addRule(symbol="", mutation="") {
-	const row = document.createElement("div");
-	row.className = "rule-row";
+function initPresets() {
+	var rules = new Rules();
+	rules.addSimpleRule('F', "FF-F-F-F-FF");
+	var colors = ["#000000"];
+	presets.push(new Preset(5, 2, 90, "F-F-F-F", rules, colors));
 	
-	const inputSymbol = document.createElement("input");
-	inputSymbol.type = "text";
-	inputSymbol.maxLength = 1;
-	inputSymbol.placeholder = "F";
-	inputSymbol.value = symbol;
-	inputSymbol.required = true;
+	rules = new Rules();
+	rules.addSimpleRule('r', "-Fl-r");
+	rules.addSimpleRule('l', "l+rF+");
+	presets.push(new Preset(18, 1, 90, "Fl", rules, colors));
 	
-	const inputMutation = document.createElement("input");
-	inputMutation.type = "text";
-	inputMutation.placeholder = "FF-[-F+F+F]+[+F-F-F]";
-	inputMutation.value = mutation;
-	inputMutation.required = true;
+	rules = new Rules();
+	rules.addSimpleRule('F', "FF-[-F+F+F]+[+F-F-F]");
+	presets.push(new Preset(5, 3, 22.5, "F", rules, colors));
 	
-	const removeBtn = document.createElement("button");
-	removeBtn.className = "remove-btn";
-	removeBtn.textContent = "x";
-	removeBtn.onclick = () => rulesContainer.removeChild(row);
+	rules = new Rules();
+	rules.addSimpleRule('A', "B-F+CFC+F-D&F^D-F+&&CFC+F+B//");
+	rules.addSimpleRule('B', "A&F^CFB^F^D^^-F-D^|F^B|FC^F^A//");
+	rules.addSimpleRule('C', "|D^|F^B-F+C^F^A&&FA&F^C+F+B^F^D//");
+	rules.addSimpleRule('D', "|CFB-F+B|FA&F^A&&FB-F+B|FC//");
+	presets.push(new Preset(4, 10, 90, "A", rules, colors));
 	
-	
-	row.appendChild(inputSymbol);
-	row.appendChild(inputMutation);
-	row.appendChild(removeBtn);
-	rulesContainer.appendChild(row);
-}
-
-function addColor(color = "#000000") {
-	const item = document.createElement("div");
-	item.className = "color-item";
-	
-	const colorInput = document.createElement("input");
-	colorInput.type = "color";
-	colorInput.className = "color-box";
-	colorInput.value = color;
-	colorInput.addEventListener("change", () => {
-        loadColorStack();
-    });
-	
-	const removeBtn = document.createElement("button");
-	removeBtn.className = "remove-btn";
-	removeBtn.textContent = "x";
-	removeBtn.onclick = () => colorStack.removeChild(item);
-	
-	item.appendChild(colorInput);
-	item.appendChild(removeBtn);
-	colorStack.appendChild(item);
-}
-
-function hexToRgbGL(hex) {
-	hex = hex.replace('#', '');
-	const bigint = parseInt(hex, 16);
-	const r = (bigint >> 16) & 255;
-	const g = (bigint >> 8) & 255;
-	const b = bigint & 255;
-	return [r / 255, g / 255, b / 255];
-}
-
-function draw(generation, length, angleRotation, axiom, rules) {
-	var lSystem = new LSystem(axiom, rules);
-	var turtleState = new TurtleState(length * 0.01, vec3.fromValues(0, 0, 0), 0);
-	
-	var turtle = new Turtle(turtleState, angleRotation);
-	var interpreter = new Interpreter(turtle);
-	var mesh = interpreter.execute(lSystem.wordAtGeneration(generation));
-	
-	loadColorStack();
-	canvasGL.loadMesh(mesh);
-}
-
-function loadColorStack() {
-	const colors = [];
-	document.querySelectorAll("#colorStack .color-item").forEach(row => {
-		const inputs = row.querySelectorAll("input");
-		if (inputs.length >= 1) {
-			const color = inputs[0].value;
-			colors.push(color);
-		}
-	});
-	var colorsGL = [];
-	for (color of colors) {
-		colorsGL.push(hexToRgbGL(color));
-	}
-	canvasGL.colors = new Float32Array(colorsGL.flat());	
-}
-
-function fetchDataAndDraw() {
-	const generation = parseInt(generationInput.value, 10);
-	const length = parseFloat(lengthInput.value);
-	const angleRotation = parseFloat(angleInput.value);
-	const axiom = axiomInput.value;
-	
-	const rules = new Rules();
-	document.querySelectorAll("#rulesContainer .rule-row").forEach(row => {
-		const inputs = row.querySelectorAll("input");
-		if (inputs.length >= 2) {
-			const symbol = inputs[0].value.trim();
-			const mutation = inputs[1].value.trim();
-			if (symbol && mutation) {
-				rules.addSimpleRule(symbol, mutation);
-			}
-		}
-	});
-	
-	draw(generation, length, angleRotation, axiom, rules);
+	rules = new Rules();
+	rules.addSimpleRule('P', "I+[P+r]--//[--l]I[++l]-[Pr]++Pr");
+	rules.addSimpleRule('p', "FF");
+	rules.addSimpleRule('r', "[&&&p'/w////w////w////w////w]");
+	rules.addSimpleRule('s', "sFs");
+	rules.addSimpleRule('w', "['^F][{&&&&-f+f|-f+f}]");
+	rules.addSimpleRule('I', "Fs[//&&l][//^^l]Fs");
+	rules.addSimpleRule('l', "['{+f-ff-f+|+f-ff-f}]");
+	colors = ["#226622", "#000000", "#DD0000"];
+	presets.push(new Preset(5, 7, 22.5, "P", rules, colors));
 }
 
 function main() {
+	const canvasGL = new CanvasGL();
+	const option = new Option(canvasGL);
+	
 	document.getElementById("abop").addEventListener("submit", function (e) {
 		e.preventDefault();
-		fetchDataAndDraw();		
+		option.fetchDataAndDraw();		
 	});	
 	
-	generationInput.value = 5;
-	lengthInput.value = 3;
-	angleInput.value = 22.5;
-	axiomInput.value = "F";
-	
-	addRule("F", "FF-[-F+F+F]+[+F-F-F]");
-	addColor();
-	
-	fetchDataAndDraw();	
+	initPresets();
+	option.loadPreset(presets[4]);
 	canvasGL.startRenderLoop();
 }
 

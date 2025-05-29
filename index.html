@@ -11,6 +11,8 @@
 		<script src="script/Rules.js"></script>
 		<script src="script/LSystem.js"></script>
 		<script src="script/CanvasGL.js"></script>
+		<script src="script/Option.js"></script>
+		<script src="script/Preset.js"></script>
 		<link href='style.css' rel='stylesheet'>
 	</head>
 	<body>
@@ -37,12 +39,12 @@
 					<aside>
 						<label for="rules">Rules :</label>
 						<div id="rulesContainer" class="rules-table"></div>
-						<button type="button" class="add-btn" onclick="addRule()">Add a rule</button>
+						<button type="button" class="add-btn" id="addRule">Add a rule</button>
 					</aside>
 					<aside>
 						<label for="rules">Color stack :</label>
 						<div id="colorStack" class="color-stack"></div>
-						<button type="button" class="add-btn" onclick="addColor()">Add a color</button>
+						<button type="button" class="add-btn" id="addColor">Add a color</button>
 					</aside>
 					<button type="submit">Draw</button>
 				</form>
