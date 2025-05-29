@@ -32,6 +32,8 @@ class Interpreter {
 		this.addCommand('∼', t.incorporateSurface.bind(t));
 		this.addCommand('!', t.decrementDiameter.bind(t));
 		this.addCommand('', t.incrementColor.bind(t));
+		this.addCommand('’', t.incrementColor.bind(t));
+		this.addCommand('‘', t.incrementColor.bind(t));
 		this.addCommand('\'', t.incrementColor.bind(t));
 		this.addCommand('%', t.cutOffRemainderBranch.bind(t));
 	}

@@ -1,8 +1,10 @@
 class Mesh {
 
 	constructor() {
-		this.vertices = [];
-		this.colorIndices = [];
+		this.verticesLine = [];
+		this.colorIndicesLine = [];
+		this.verticesPolygon = [];
+		this.colorIndicesPolygon = [];
 		this.minX = Infinity;
 		this.maxX = -Infinity;
 		this.minY = Infinity;
@@ -16,19 +18,40 @@ class Mesh {
 		this.minY = Math.min(this.minY, start[1], end[1]);
 		this.maxY = Math.max(this.maxY, start[1], end[1]);
 		
-		this.vertices.push(...start);
-		this.vertices.push(...end);
+		this.verticesLine.push(...start);
+		this.verticesLine.push(...end);
 		
-		this.colorIndices.push(colorIndex);
-		this.colorIndices.push(colorIndex);	
+		this.colorIndicesLine.push(colorIndex);
+		this.colorIndicesLine.push(colorIndex);	
 	}
 	
-	getVertexBuffer() {
-		return new Float32Array(this.vertices);
+	addPolygon(vertices, colorIndices) {
+		for (let i = 1; i < vertices.length - 1; i ++) {
+			this.verticesPolygon.push(...vertices[i]);
+			this.colorIndicesPolygon.push(colorIndices[i]);
+			
+			this.verticesPolygon.push(...vertices[i + 1]);
+			this.colorIndicesPolygon.push(colorIndices[i + 1]);
+			
+			this.verticesPolygon.push(...vertices[0]);
+			this.colorIndicesPolygon.push(colorIndices[0]);
+		}
 	}
 	
-	getColorIndexBuffer() {
-		return new Float32Array(this.colorIndices);
+	getVertexLineBuffer() {
+		return new Float32Array(this.verticesLine);
+	}
+	
+	getColorIndexLineBuffer() {
+		return new Float32Array(this.colorIndicesLine);
+	}
+	
+	getVertexPolygonBuffer() {
+		return new Float32Array(this.verticesPolygon);
+	}
+	
+	getColorIndexPolygonBuffer() {
+		return new Float32Array(this.colorIndicesPolygon);
 	}
 	
 	centerX() {

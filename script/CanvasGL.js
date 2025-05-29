@@ -71,25 +71,32 @@ class CanvasGL {
 	}
 	
 	loadMesh(mesh) {	
-		const gl = this.gl;
-		const vertices = mesh.getVertexBuffer();
-		const colorIndices = mesh.getColorIndexBuffer();
-		
+		const gl = this.gl;		
 		this.position = vec3.fromValues(mesh.centerX(), mesh.centerY(), 5);	
 		
-		this.vertexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-		gl.enableVertexAttribArray(this.aPositionLoc);
-		gl.vertexAttribPointer(this.aPositionLoc, 3, gl.FLOAT, false, 0, 0);	
+		const verticesLine = mesh.getVertexLineBuffer();
+		const colorIndicesLine = mesh.getColorIndexLineBuffer();
+		const verticesPolygon = mesh.getVertexPolygonBuffer();
+		const colorIndicesPolygon = mesh.getColorIndexPolygonBuffer();
 		
-		this.colorIndexBuffer = gl.createBuffer();
-		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorIndexBuffer);
-		gl.bufferData(gl.ARRAY_BUFFER, colorIndices, gl.STATIC_DRAW);
-		gl.enableVertexAttribArray(this.aColorIndexLoc);
-		gl.vertexAttribPointer(this.aColorIndexLoc, 1, gl.FLOAT, false, 0, 0);	
+		this.vertexLineBuffer = gl.createBuffer();
+		this.configBuffer(this.vertexLineBuffer, verticesLine);
+		this.vertexPolygonBuffer = gl.createBuffer();
+		this.configBuffer(this.vertexPolygonBuffer, verticesPolygon);
 		
-		this.vertexCount = vertices.length / 3;
+		this.colorIndexLineBuffer = gl.createBuffer();
+		this.configBuffer(this.colorIndexLineBuffer, colorIndicesLine);
+		this.colorIndexPolygonBuffer = gl.createBuffer();
+		this.configBuffer(this.colorIndexPolygonBuffer, colorIndicesPolygon);
+		
+		this.vertexLineCount = verticesLine.length / 3;
+		this.vertexPolygonCount = verticesPolygon.length / 3;
+	}
+	
+	configBuffer(buffer, data) {
+		const gl = this.gl;	
+		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+		gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 	}
 	
 	startRenderLoop() {
@@ -116,7 +123,23 @@ class CanvasGL {
 		gl.uniform3fv(this.colorStackLocation, this.colors);
 		gl.uniform1i(this.colorStackLengthLocation, this.colors.length);
 		
-		gl.drawArrays(gl.LINES, 0, this.vertexCount);
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexLineBuffer);
+		gl.enableVertexAttribArray(this.aPositionLoc);
+		gl.vertexAttribPointer(this.aPositionLoc, 3, gl.FLOAT, false, 0, 0);	
+		
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorIndexLineBuffer);
+		gl.enableVertexAttribArray(this.aColorIndexLoc);
+		gl.vertexAttribPointer(this.aColorIndexLoc, 1, gl.FLOAT, false, 0, 0);
+		gl.drawArrays(gl.LINES, 0, this.vertexLineCount);
+		
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexPolygonBuffer);
+		gl.enableVertexAttribArray(this.aPositionLoc);
+		gl.vertexAttribPointer(this.aPositionLoc, 3, gl.FLOAT, false, 0, 0);	
+		
+		gl.bindBuffer(gl.ARRAY_BUFFER, this.colorIndexPolygonBuffer);
+		gl.enableVertexAttribArray(this.aColorIndexLoc);
+		gl.vertexAttribPointer(this.aColorIndexLoc, 1, gl.FLOAT, false, 0, 0);
+		gl.drawArrays(gl.TRIANGLES, 0, this.vertexPolygonCount);
 	}
 	
 	resizeCanvasToDisplaySize() {

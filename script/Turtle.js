@@ -4,8 +4,11 @@ class Turtle {
 		this.turtleState = turtleState;
 		this.angleRotation = this._degToRad(angleRotationDegree);
 		this.mesh = new Mesh();
-		this.states = [];
+		
+		this.recordPolygon = false;
+		this.states = [];		
 		this.polygonVertices = [];
+		this.polygonColorIndices = [];
 	}
 	
 	moveForward() {
@@ -21,6 +24,11 @@ class Turtle {
 		
 		vec3.scale(delta, direction, this.turtleState.length);
 		vec3.add(this.turtleState.position, this.turtleState.position, delta);
+		
+		if (this.recordPolygon) {
+			this.polygonVertices.push(vec3.clone(this.turtleState.position));
+			this.polygonColorIndices.push(this.turtleState.colorIndex);
+		}		
 	}
 	
 	turn(angleRotation) {
@@ -96,7 +104,7 @@ class Turtle {
 	}
 	
 	startPolygon() {
-		this.polygonVertices = [];
+		this.recordPolygon = true;
 	}
 	
 	moveForwardWithoutRecord() {
@@ -106,13 +114,17 @@ class Turtle {
 	}
 	
 	completePolygon() {
+		this.mesh.addPolygon(this.polygonVertices, this.turtleState.colorIndex);
+		this.recordPolygon = false;
+		this.polygonVertices = [];
+		this.polygonColorIndices = [];
 	}
 	
 	incorporateSurface() {
 	}
 	
 	decrementDiameter() {
-		this.turtleState.length --;
+		this.turtleState.length *= 0.5;
 	}
 	
 	incrementColor() {
