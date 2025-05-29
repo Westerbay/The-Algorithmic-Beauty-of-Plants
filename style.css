@@ -96,25 +96,19 @@ button.remove-btn {
 }
 
 .color-item {
-	display: grid;
-	grid-template-columns: 5fr 1fr;
 	background-color: #f8f8f8;
 	border-radius: 5px;
 	margin-bottom: 5px;
+}
+
+.color-item input {
+	width: 80%;
 }
 
 .color-box {
 	border-radius: 4px;
 	margin-right: 0.5em;
 	border: 1px solid black;
-}
-
-.color-add-row {
-	margin: auto;
-	display: flex;
-	align-items: center;
-	gap: 0.5em;
-	margin-top: 0.5em;
 }
 
 #glcanvas {

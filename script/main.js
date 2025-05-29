@@ -1,5 +1,9 @@
 const rulesContainer = document.getElementById("rulesContainer");
 const colorStack = document.getElementById("colorStack");
+const generationInput = document.getElementById("generation");
+const lengthInput = document.getElementById("length");
+const angleInput = document.getElementById("angle");
+const axiomInput = document.getElementById("axiom");
 
 const canvasGL = new CanvasGL();
 
@@ -32,14 +36,14 @@ function addRule(symbol="", mutation="") {
 	rulesContainer.appendChild(row);
 }
 
-function addColor() {
+function addColor(color = "#000000") {
 	const item = document.createElement("div");
 	item.className = "color-item";
 	
 	const colorInput = document.createElement("input");
 	colorInput.type = "color";
 	colorInput.className = "color-box";
-	colorInput.value = "#000000";
+	colorInput.value = color;
 	colorInput.addEventListener("change", () => {
         loadColorStack();
     });
@@ -92,10 +96,10 @@ function loadColorStack() {
 }
 
 function fetchDataAndDraw() {
-	const generation = parseInt(document.getElementById("generation").value, 10);
-	const length = parseFloat(document.getElementById("length").value);
-	const angleRotation = parseFloat(document.getElementById("angle").value);
-	const axiom = document.getElementById("axiom").value;
+	const generation = parseInt(generationInput.value, 10);
+	const length = parseFloat(lengthInput.value);
+	const angleRotation = parseFloat(angleInput.value);
+	const axiom = axiomInput.value;
 	
 	const rules = new Rules();
 	document.querySelectorAll("#rulesContainer .rule-row").forEach(row => {
@@ -118,13 +122,15 @@ function main() {
 		fetchDataAndDraw();		
 	});	
 	
-	addColor();
+	generationInput.value = 5;
+	lengthInput.value = 3;
+	angleInput.value = 22.5;
+	axiomInput.value = "F";
+	
 	addRule("F", "FF-[-F+F+F]+[+F-F-F]");
+	addColor();
 	
-	var rules = new Rules();
-	rules.addSimpleRule('F', "FF-[-F+F+F]+[+F-F-F]"); 
-	draw(5, 3, 22.5, "F", rules);
-	
+	fetchDataAndDraw();	
 	canvasGL.startRenderLoop();
 }
 
