@@ -5,6 +5,7 @@ class Turtle {
 		this.angleRotation = this._degToRad(angleRotationDegree);
 		this.mesh = new Mesh();
 		this.states = [];
+		this.polygonVertices = [];
 	}
 	
 	moveForward() {
@@ -40,20 +41,47 @@ class Turtle {
 	turnRight() {
 		this.turn(-this.angleRotation);
 	}
+	
+	pitch(angleRotation) {
+		const cosAlpha = Math.cos(angleRotation);
+		const sinAlpha = Math.sin(angleRotation);
+		const R = mat3.fromValues(
+			cosAlpha, 0, -sinAlpha,
+			0, 1, 0,
+			sinAlpha, 0, cosAlpha
+		);
+		mat3.multiply(this.turtleState.orientation, this.turtleState.orientation, R);
+	}
 
 	pitchUp() {
+		this.pitch(this.angleRotation);
 	}
 
 	pitchDown() {
+		this.pitch(-this.angleRotation);
+	}
+	
+	roll(angleRotation) {
+		const cosAlpha = Math.cos(angleRotation);
+		const sinAlpha = Math.sin(angleRotation);
+		const R = mat3.fromValues(
+			1, 0, 0,
+			0, cosAlpha, -sinAlpha,
+			0, sinAlpha, cosAlpha
+		);
+		mat3.multiply(this.turtleState.orientation, this.turtleState.orientation, R);
 	}
 
 	rollLeft() {
+		this.roll(this.angleRotation);
 	}
 
 	rollRight() {
+		this.roll(-this.angleRotation);
 	}
 
 	turnAround() {
+		this.turn(Math.PI);
 	}
 
 	rotateVertical() {
@@ -68,6 +96,7 @@ class Turtle {
 	}
 	
 	startPolygon() {
+		this.polygonVertices = [];
 	}
 	
 	moveForwardWithoutRecord() {
@@ -83,12 +112,15 @@ class Turtle {
 	}
 	
 	decrementDiameter() {
+		this.turtleState.length --;
 	}
 	
 	incrementColor() {
+		this.turtleState.colorIndex ++;
 	}
 	
 	cutOffRemainderBranch() {
+		this.states = [];
 	}
 	
 	_degToRad(deg) {
