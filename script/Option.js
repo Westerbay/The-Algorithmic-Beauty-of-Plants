@@ -1,7 +1,7 @@
 class Option {
 
-	constructor(canvasGL) {
-		this.canvasGL = canvasGL;
+	constructor(openGL) {
+		this.openGL = openGL;
 		this.rulesContainer = document.getElementById("rulesContainer");
 		this.addRuleButton = document.getElementById("addRule");
 		this.addRuleButton.onclick = () => this.addSimpleRule();
@@ -86,7 +86,7 @@ class Option {
 		for (var color of colors) {
 			colorsGL.push(this.hexToRgbGL(color));
 		}
-		this.canvasGL.colors = new Float32Array(colorsGL.flat());	
+		this.openGL.colors = new Float32Array(colorsGL.flat());	
 	}
 	
 	draw(generation, length, angleRotation, axiom, rules) {
@@ -98,7 +98,7 @@ class Option {
 		const mesh = interpreter.execute(lSystem.wordAtGeneration(generation));
 		
 		this.loadColorStack();
-		this.canvasGL.loadMesh(mesh);
+		this.openGL.loadMesh(mesh);
 	}
 	
 	fetchDataAndDraw() {

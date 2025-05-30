@@ -59,7 +59,7 @@ class Mesh {
 	}
 	
 	getElementLineBuffer() {
-		return new Uint16Array(this.elementsLine);
+		return new Uint32Array(this.elementsLine);
 	}
 	
 	getVertexPolygonBuffer() {
@@ -71,7 +71,7 @@ class Mesh {
 	}
 	
 	getElementPolygonBuffer() {
-		return new Uint16Array(this.elementsPolygon);
+		return new Uint32Array(this.elementsPolygon);
 	}
 	
 	centerX() {

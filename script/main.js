@@ -36,7 +36,7 @@ function initPresets() {
 
 function main() {
 	const canvasGL = new CanvasGL();
-	const option = new Option(canvasGL);
+	const option = new Option(canvasGL.openGL);
 	
 	document.getElementById("abop").addEventListener("submit", function (e) {
 		e.preventDefault();
