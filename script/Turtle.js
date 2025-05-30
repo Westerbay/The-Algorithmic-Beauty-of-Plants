@@ -4,18 +4,22 @@ class Turtle {
 		this.turtleState = turtleState;
 		this.angleRotation = this._degToRad(angleRotationDegree);
 		this.mesh = new Mesh();
+		this.mesh.addVertexLine(
+			vec3.clone(this.turtleState.position),
+			turtleState.colorIndex
+		);
 		
+		this.currentVertexElementLine = 0;
+		this.currentVertexElementPolygon = 0;
 		this.recordPolygon = false;
 		this.states = [];		
-		this.polygonVertices = [];
-		this.polygonColorIndices = [];
+		this.polygonElements = [];
 	}
 	
 	moveForward() {
-		const start = vec3.clone(this.turtleState.position);
 		this.moveForwardWithoutDrawing();
-		const end = vec3.clone(this.turtleState.position);
-		this.mesh.addLine(start, end, this.turtleState.colorIndex);
+		this.mesh.addLine(this.turtleState.lastVertexElementLine, this.currentVertexElementLine);
+		this.turtleState.lastVertexElementLine = this.currentVertexElementLine;
 	}
 	
 	moveForwardWithoutDrawing() {
@@ -26,8 +30,20 @@ class Turtle {
 		vec3.add(this.turtleState.position, this.turtleState.position, delta);
 		
 		if (this.recordPolygon) {
-			this.polygonVertices.push(vec3.clone(this.turtleState.position));
-			this.polygonColorIndices.push(this.turtleState.colorIndex);
+			this.mesh.addVertexPolygon(
+				vec3.clone(this.turtleState.position),
+				this.turtleState.colorIndex
+			);
+			
+			this.polygonElements.push(this.currentVertexElementPolygon);
+			this.currentVertexElementPolygon += 1;
+		}
+		else {
+			this.mesh.addVertexLine(
+				vec3.clone(this.turtleState.position),
+				this.turtleState.colorIndex
+			);
+			this.currentVertexElementLine += 1;
 		}		
 	}
 	
@@ -114,10 +130,9 @@ class Turtle {
 	}
 	
 	completePolygon() {
-		this.mesh.addPolygon(this.polygonVertices, this.turtleState.colorIndex);
+		this.mesh.addPolygon(this.polygonElements);
 		this.recordPolygon = false;
-		this.polygonVertices = [];
-		this.polygonColorIndices = [];
+		this.polygonElements = [];
 	}
 	
 	incorporateSurface() {
@@ -128,7 +143,7 @@ class Turtle {
 	}
 	
 	incrementColor() {
-		this.turtleState.colorIndex ++;
+		this.turtleState.colorIndex += 1;
 	}
 	
 	cutOffRemainderBranch() {

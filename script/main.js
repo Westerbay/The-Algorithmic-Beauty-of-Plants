@@ -30,7 +30,7 @@ function initPresets() {
 	rules.addSimpleRule('w', "['^F][{&&&&-f+f|-f+f}]");
 	rules.addSimpleRule('I', "Fs[//&&l][//^^l]Fs");
 	rules.addSimpleRule('l', "['{+f-ff-f+|+f-ff-f}]");
-	colors = ["#226622", "#000000", "#DD0000"];
+	colors = ["#886622", "#227722", "#DD0000"];
 	presets.push(new Preset(5, 7, 22.5, "P", rules, colors));
 }
 

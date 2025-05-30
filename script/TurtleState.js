@@ -9,11 +9,13 @@ class TurtleState {
 			0,  0, -1
 		);
 		this.colorIndex = colorIndex;
+		this.lastVertexElementLine = 0;
 	}
 	
 	clone() {
 		const copy = new TurtleState(this.length, this.position, this.colorIndex);
 		mat3.copy(copy.orientation, this.orientation);
+		copy.lastVertexElementLine = this.lastVertexElementLine; 
 		return copy;
 	}
 

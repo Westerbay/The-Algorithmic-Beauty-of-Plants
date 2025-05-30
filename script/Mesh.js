@@ -3,38 +3,50 @@ class Mesh {
 	constructor() {
 		this.verticesLine = [];
 		this.colorIndicesLine = [];
+		this.elementsLine = [];
+		
 		this.verticesPolygon = [];
 		this.colorIndicesPolygon = [];
+		this.elementsPolygon = [];
+		
 		this.minX = Infinity;
 		this.maxX = -Infinity;
 		this.minY = Infinity;
 		this.maxY = -Infinity;
 	}
 	
-	addLine(start, end, colorIndex) {
-		this.minX = Math.min(this.minX, start[0], end[0]);
-		this.maxX = Math.max(this.maxX, start[0], end[0]);
+	addVertexLine(vertex, colorIndex) {
+		this.minX = Math.min(this.minX, vertex[0]);
+		this.maxX = Math.max(this.maxX, vertex[0]);
 		
-		this.minY = Math.min(this.minY, start[1], end[1]);
-		this.maxY = Math.max(this.maxY, start[1], end[1]);
+		this.minY = Math.min(this.minY, vertex[1]);
+		this.maxY = Math.max(this.maxY, vertex[1]);
 		
-		this.verticesLine.push(...start);
-		this.verticesLine.push(...end);
-		
+		this.verticesLine.push(...vertex);
 		this.colorIndicesLine.push(colorIndex);
-		this.colorIndicesLine.push(colorIndex);	
 	}
 	
-	addPolygon(vertices, colorIndices) {
-		for (let i = 1; i < vertices.length - 1; i ++) {
-			this.verticesPolygon.push(...vertices[i]);
-			this.colorIndicesPolygon.push(colorIndices[i]);
-			
-			this.verticesPolygon.push(...vertices[i + 1]);
-			this.colorIndicesPolygon.push(colorIndices[i + 1]);
-			
-			this.verticesPolygon.push(...vertices[0]);
-			this.colorIndicesPolygon.push(colorIndices[0]);
+	addVertexPolygon(vertex, colorIndex) {
+		this.minX = Math.min(this.minX, vertex[0]);
+		this.maxX = Math.max(this.maxX, vertex[0]);
+		
+		this.minY = Math.min(this.minY, vertex[1]);
+		this.maxY = Math.max(this.maxY, vertex[1]);
+		
+		this.verticesPolygon.push(...vertex);
+		this.colorIndicesPolygon.push(colorIndex);
+	}
+	
+	addLine(start, end) {		
+		this.elementsLine.push(start);	
+		this.elementsLine.push(end);	
+	}
+	
+	addPolygon(elements) {
+		for (let i = 1; i < elements.length - 1; i ++) {			
+			this.elementsPolygon.push(elements[i]);
+			this.elementsPolygon.push(elements[i + 1]);
+			this.elementsPolygon.push(elements[0]);
 		}
 	}
 	
@@ -46,12 +58,20 @@ class Mesh {
 		return new Float32Array(this.colorIndicesLine);
 	}
 	
+	getElementLineBuffer() {
+		return new Uint16Array(this.elementsLine);
+	}
+	
 	getVertexPolygonBuffer() {
 		return new Float32Array(this.verticesPolygon);
 	}
 	
 	getColorIndexPolygonBuffer() {
 		return new Float32Array(this.colorIndicesPolygon);
+	}
+	
+	getElementPolygonBuffer() {
+		return new Uint16Array(this.elementsPolygon);
 	}
 	
 	centerX() {
