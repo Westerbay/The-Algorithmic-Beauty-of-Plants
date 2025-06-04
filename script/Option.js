@@ -123,6 +123,9 @@ class Option {
 	}
 	
 	loadPreset(preset) {	
+		this.colorStack.innerHTML = '';
+		this.rulesContainer.innerHTML = '';
+
 		this.generationInput.value = preset.generation;
 		this.lengthInput.value = preset.length;
 		this.angleInput.value = preset.angle;

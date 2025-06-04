@@ -34,14 +34,16 @@ function initPresets() {
 	presets.push(new Preset(5, 7, 22.5, "P", rules, colors));
 }
 
+function loadPreset(option, value) {
+	option.loadPreset(presets[value]);
+}
+
 function main() {
 	const canvasGL = new CanvasGL();
 	const option = new Option(canvasGL.openGL);
 
 	const toggleBtn = document.getElementById('toggleSidebar');
 	const layout = document.getElementById('layout');
-	const icon = toggleBtn.querySelector('.icon');
-
 	toggleBtn.addEventListener('click', () => {
 		layout.classList.toggle('collapsed');
 
@@ -49,15 +51,19 @@ function main() {
 		toggleBtn.setAttribute('aria-label', isCollapsed ? 'Show sidebar' : 'Hide sidebar');
 	});
 
-	
+	document.getElementById('presets').addEventListener('change', (e) => {
+		const value = parseInt(e.target.value);
+		loadPreset(option, value);
+	});
+
 	document.getElementById("abop").addEventListener("submit", function (e) {
 		e.preventDefault();
 		option.fetchDataAndDraw();		
 	});	
 	
 	initPresets();
-	option.loadPreset(presets[4]);
 	canvasGL.startRenderLoop();
+	loadPreset(option, 4);
 }
 
 document.addEventListener("DOMContentLoaded", main);
