@@ -4,7 +4,7 @@ function initPresets() {
 	var rules = new Rules();
 	rules.addSimpleRule('F', "FF-F-F-F-FF");
 	var colors = ["#000000"];
-	presets.push(new Preset(5, 2, 90, "F-F-F-F", rules, colors));
+	presets.push(new Preset(4, 2, 90, "F-F-F-F", rules, colors));
 	
 	rules = new Rules();
 	rules.addSimpleRule('r', "-Fl-r");
@@ -67,8 +67,8 @@ function main() {
 	initPresets();
 	canvasGL.startRenderLoop();
 
-	presets.value = "1";
-	loadPreset(option, 1);
+	presets.value = "0";
+	loadPreset(option, 0);
 }
 
 document.addEventListener("DOMContentLoaded", main);

@@ -15,7 +15,7 @@ class OpenGL {
 			
 			uniform mat4 cameraMatrix;
 			uniform mat4 model;
-			uniform vec3 colorStack[1000];
+			uniform vec3 colorStack[16];
 			uniform int colorStackLength;
 			
 			varying vec3 fragColor;

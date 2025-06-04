@@ -44,6 +44,11 @@ class Option {
 	}
 	
 	addColor(color = "#000000") {
+		if (this.colorStack.querySelectorAll(".color-item").length >= 16) {
+			alert("Maximum of 16 colors reached.");
+			return;
+		}
+		
 		const item = document.createElement("div");
 		item.className = "color-item";
 		
