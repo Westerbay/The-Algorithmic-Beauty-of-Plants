@@ -37,6 +37,18 @@ function initPresets() {
 function main() {
 	const canvasGL = new CanvasGL();
 	const option = new Option(canvasGL.openGL);
+
+	const toggleBtn = document.getElementById('toggleSidebar');
+	const layout = document.getElementById('layout');
+	const icon = toggleBtn.querySelector('.icon');
+
+	toggleBtn.addEventListener('click', () => {
+		layout.classList.toggle('collapsed');
+
+		const isCollapsed = layout.classList.contains('collapsed');
+		toggleBtn.setAttribute('aria-label', isCollapsed ? 'Show sidebar' : 'Hide sidebar');
+	});
+
 	
 	document.getElementById("abop").addEventListener("submit", function (e) {
 		e.preventDefault();

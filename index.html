@@ -15,12 +15,19 @@
 		<script src="script/CanvasGL.js"></script>
 		<script src="script/Option.js"></script>
 		<script src="script/Preset.js"></script>
-		<link href='style.css' rel='stylesheet'>
+		<link href='style/skull.css' rel='stylesheet'>
+		<link href='style/canvas.css' rel='stylesheet'>
+		<link href='style/sidebar.css' rel='stylesheet'>
+		<link href='style/toggle.css' rel='stylesheet'>
 	</head>
 	<body>
 		<article id="layout">
+			<button id="toggleSidebar" aria-label="Hide sidebar">
+				<span class="icon"></span>
+			</button>
+			<canvas id="glcanvas"></canvas>
 			<section id="sidebar">
-				<button id="toggleSidebar">☰ Options</button>
+				<h2>LSystems</h2>
 				<form id="abop">
 					<aside>
 						<label for="generation">Generation :</label>
@@ -51,7 +58,6 @@
 					<button type="submit">Draw</button>
 				</form>
 			</section>
-			<canvas id="glcanvas"></canvas>
 		</article>
 		<script src="script/main.js"></script>
 	</body>

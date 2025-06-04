@@ -1,25 +1,3 @@
-* {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-}
-
-body, html {
-	height: 100%;
-	font-family: 'Segoe UI', sans-serif;
-}
-
-#layout {
-	display: grid;
-	grid-template-columns: 300px 1fr;
-	height: 100vh;
-	transition: all 0.3s ease;
-}
-
-#layout.collapsed {
-	grid-template-columns: 0 1fr;
-}
-
 #sidebar {
 	background-color: #ffffff;
 	padding: 1em;
@@ -27,17 +5,14 @@ body, html {
 	display: flex;
 	flex-direction: column;
 	overflow-y: auto;
+    position: relative;
+    border: solid 1px black;
 }
 
-#toggleSidebar {
-	background-color: #007BFF;
-	color: white;
-	border: none;
-	padding: 0.6em;
-	margin-bottom: 1em;
-	font-size: 1em;
-	cursor: pointer;
-	border-radius: 6px;
+#layout.collapsed #sidebar {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
 }
 
 #rulesContainer, #colorStack {
@@ -47,31 +22,37 @@ body, html {
 	border-right: 1px solid #ccc;
 }
 
-form {
+#sidebar form {
 	display: flex;
 	flex-direction: column;
 	gap: 1em;
 }
 
-aside {
+#sidebar aside {
 	display: flex;
 	flex-direction: column;
 }
 
-input, select, button {
+#sidebar input, #sidebar select, #sidebar button {
 	padding: 0.5em;
 	font-size: 1em;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 }
 
-button.add-btn {
+#sidebar button.add-btn {
 	background-color: #28a745;
 	color: white;
 	font-weight: bold;
 }
 
-button.remove-btn {
+#sidebar button.add-btn:hover,
+#sidebar button.remove-btn:hover,
+.color-item input {
+	cursor: pointer;
+}
+
+#sidebar button.remove-btn {
 	background: none;
 	border: none;
 	color: #c00;
@@ -79,7 +60,7 @@ button.remove-btn {
 	cursor: pointer;
 }
 
-.rule-row {
+#sidebar .rule-row {
 	display: grid;
 	grid-template-columns: 30px 1fr auto;
 	align-items: center;
@@ -87,33 +68,31 @@ button.remove-btn {
 	width: 100%;
 }
 
-.rule-row input[type="text"]:first-child {
+#sidebar .rule-row input[type="text"]:first-child {
 	width: 100%;
 }
 
-.rule-row input[type="text"]:nth-child(2) {
+#sidebar .rule-row input[type="text"]:nth-child(2) {
 	width: 100%;
 }
 
-.color-item {
+#sidebar .color-item {
 	background-color: #f8f8f8;
 	border-radius: 5px;
 	margin-bottom: 5px;
 }
 
-.color-item input {
+#sidebar .color-item input {
 	width: 80%;
 }
 
-.color-box {
+#sidebar .color-box {
 	border-radius: 4px;
 	margin-right: 0.5em;
 	border: 1px solid black;
 }
 
-#glcanvas {
-	width: 100%;
-	height: 100%;
-	display: block;
+#sidebar h2 {
+	text-align: center;
+	margin: 1em;
 }
-

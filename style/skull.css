@@ -1,0 +1,25 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body, html {
+	height: 100%;
+	font-family: 'Segoe UI', sans-serif;
+}
+
+article {
+	transition: all 1s ease;
+}
+
+#layout {
+	display: grid;
+	grid-template-columns: 1fr 300px;
+	height: 100vh;
+}
+
+#layout.collapsed {
+	grid-template-columns: 1fr 0;
+}
+
