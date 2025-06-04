@@ -13,7 +13,7 @@ function initPresets() {
 	
 	rules = new Rules();
 	rules.addSimpleRule('F', "FF-[-F+F+F]+[+F-F-F]");
-	presets.push(new Preset(5, 3, 22.5, "F", rules, colors));
+	presets.push(new Preset(4, 6, 22.5, "F", rules, colors));
 	
 	rules = new Rules();
 	rules.addSimpleRule('A', "B-F+CFC+F-D&F^D-F+&&CFC+F+B//");
@@ -44,6 +44,9 @@ function main() {
 
 	const toggleBtn = document.getElementById('toggleSidebar');
 	const layout = document.getElementById('layout');
+	const presets = document.getElementById("presets");
+	const abop = document.getElementById("abop");
+
 	toggleBtn.addEventListener('click', () => {
 		layout.classList.toggle('collapsed');
 
@@ -51,18 +54,20 @@ function main() {
 		toggleBtn.setAttribute('aria-label', isCollapsed ? 'Show sidebar' : 'Hide sidebar');
 	});
 
-	document.getElementById('presets').addEventListener('change', (e) => {
+	presets.addEventListener('change', (e) => {
 		const value = parseInt(e.target.value);
 		loadPreset(option, value);
 	});
 
-	document.getElementById("abop").addEventListener("submit", function (e) {
+	abop.addEventListener("submit", function (e) {
 		e.preventDefault();
 		option.fetchDataAndDraw();		
 	});	
 	
 	initPresets();
 	canvasGL.startRenderLoop();
+
+	presets.value = "1";
 	loadPreset(option, 1);
 }
 

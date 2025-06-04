@@ -17,9 +17,9 @@ class CanvasGL {
 		const displayWidth = canvas.clientWidth;
 		const displayHeight = canvas.clientHeight;
 
-		if (canvas.width * 2 !== displayWidth || canvas.height * 2 !== displayHeight) {
-			canvas.width = 2 * displayWidth;
-			canvas.height = 2 * displayHeight;
+		if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+			canvas.width = displayWidth;
+			canvas.height = displayHeight;
 		}
 	}
 	
