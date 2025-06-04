@@ -9,7 +9,7 @@ function initPresets() {
 	rules = new Rules();
 	rules.addSimpleRule('r', "-Fl-r");
 	rules.addSimpleRule('l', "l+rF+");
-	presets.push(new Preset(18, 1, 90, "Fl", rules, colors));
+	presets.push(new Preset(16, 1, 90, "Fl", rules, colors));
 	
 	rules = new Rules();
 	rules.addSimpleRule('F', "FF-[-F+F+F]+[+F-F-F]");
@@ -63,7 +63,7 @@ function main() {
 	
 	initPresets();
 	canvasGL.startRenderLoop();
-	loadPreset(option, 4);
+	loadPreset(option, 1);
 }
 
 document.addEventListener("DOMContentLoaded", main);

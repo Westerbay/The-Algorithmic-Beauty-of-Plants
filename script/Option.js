@@ -33,6 +33,7 @@ class Option {
 		
 		const removeBtn = document.createElement("button");
 		removeBtn.className = "remove-btn";
+		removeBtn.type = "button";
 		removeBtn.textContent = "x";
 		removeBtn.onclick = () => rulesContainer.removeChild(row);
 		
@@ -56,6 +57,7 @@ class Option {
 		
 		const removeBtn = document.createElement("button");
 		removeBtn.className = "remove-btn";
+		removeBtn.type = "button";
 		removeBtn.textContent = "x";
 		removeBtn.onclick = () => colorStack.removeChild(item);
 		
