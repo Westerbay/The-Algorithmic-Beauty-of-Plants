@@ -6,6 +6,7 @@ class CanvasGL {
 		this.dezoomButton = document.getElementById("dezoom");
 		this.resetCameraButton = document.getElementById("resetCamera");
 		this.rotateButton = document.getElementById("rotate");
+		this.downloadButton = document.getElementById("download");
 		this.gl = this.canvas.getContext("webgl");
 
 		if (!this.gl) {
@@ -19,19 +20,14 @@ class CanvasGL {
 		this.sensibility = 0.005;
 		
 		this.initInteraction();
-		this.initOptions();
+		this.initOptionsButtons();
 	}
 
-	initOptions() {
+	initOptionsButtons() {
 		this.camera.rotate = this.rotateButton.checked;
-		this.canvas.addEventListener("wheel", (e) => {
-			e.preventDefault();
 
-			if (e.deltaY > 0) {
-				this.camera.increaseRadius(); 
-			} else {
-				this.camera.decreaseRadius(); 
-			}
+		this.downloadButton.addEventListener("click", () => {
+			alert("This feature is not implemented yet.");
 		});
 
 		this.dezoomButton.addEventListener("click", () => {
@@ -67,6 +63,16 @@ class CanvasGL {
 	initInteraction() {
 		let lastX = 0;
 		let lastY = 0;
+
+		this.canvas.addEventListener("wheel", (e) => {
+			e.preventDefault();
+
+			if (e.deltaY > 0) {
+				this.camera.increaseRadius(); 
+			} else {
+				this.camera.decreaseRadius(); 
+			}
+		});
 
 		this.canvas.addEventListener("mousedown", (e) => {
 			this.dragging = true;
