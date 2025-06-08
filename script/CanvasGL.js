@@ -2,6 +2,9 @@ class CanvasGL {
 
 	constructor() {
 		this.canvas = document.getElementById("glcanvas");
+		this.zoomButton = document.getElementById("zoom");
+		this.dezoomButton = document.getElementById("dezoom");
+		this.resetCameraButton = document.getElementById("resetCamera");
 		this.gl = this.canvas.getContext("webgl");
 
 		if (!this.gl) {
@@ -9,29 +12,53 @@ class CanvasGL {
 			return;
 		}
 		
+		this.dragging = false;
 		this.openGL = new OpenGL(this.gl);
 		this.camera = this.openGL.camera;
 		this.sensibility = 0.005;
 		this.initInteraction();
+		this.initOptions();
+	}
+
+	initOptions() {
+		this.dezoomButton.addEventListener("click", () => {
+			if (this.dragging) {
+				return;
+			}
+			this.camera.increaseRadius();
+		});
+
+		this.zoomButton.addEventListener("click", () => {
+			if (this.dragging) {
+				return;
+			}
+			this.camera.decreaseRadius();
+		});
+
+		this.resetCameraButton.addEventListener("click", () => {
+			if (this.dragging) {
+				return;
+			}
+			this.camera.reset();
+		});
 	}
 	
 	initInteraction() {
-		let dragging = false;
 		let lastX = 0;
 		let lastY = 0;
 
 		this.canvas.addEventListener("mousedown", (e) => {
-			dragging = true;
+			this.dragging = true;
 			lastX = e.clientX;
 			lastY = e.clientY;
 		});
 
 		window.addEventListener("mouseup", () => {
-			dragging = false;
+			this.dragging = false;
 		});
 
 		window.addEventListener("mousemove", (e) => {
-			if (!dragging) {
+			if (!this.dragging) {
 				return;
 			}
 
