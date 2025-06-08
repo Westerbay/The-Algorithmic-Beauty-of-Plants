@@ -17,6 +17,7 @@ class CanvasGL {
 		this.openGL = new OpenGL(this.gl);
 		this.camera = this.openGL.camera;
 		this.sensibility = 0.005;
+		
 		this.initInteraction();
 		this.initOptions();
 	}

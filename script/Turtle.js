@@ -36,14 +36,14 @@ class Turtle {
 			);
 			
 			this.polygonElements.push(this.currentVertexElementPolygon);
-			this.currentVertexElementPolygon += 1;
+			this.currentVertexElementPolygon ++;
 		}
 		else {
 			this.mesh.addVertexLine(
 				vec3.clone(this.turtleState.position),
 				this.turtleState.colorIndex
 			);
-			this.currentVertexElementLine += 1;
+			this.currentVertexElementLine ++;
 		}		
 	}
 	
@@ -143,7 +143,7 @@ class Turtle {
 	}
 	
 	incrementColor() {
-		this.turtleState.colorIndex += 1;
+		this.turtleState.colorIndex ++;
 	}
 	
 	cutOffRemainderBranch() {

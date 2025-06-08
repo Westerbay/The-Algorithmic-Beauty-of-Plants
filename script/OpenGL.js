@@ -14,7 +14,6 @@ class OpenGL {
 			attribute float aColorIndex;
 			
 			uniform mat4 cameraMatrix;
-			uniform mat4 model;
 			uniform vec3 colorStack[16];
 			uniform int colorStackLength;
 			
@@ -23,7 +22,7 @@ class OpenGL {
 			void main() {
 				int i = int(aColorIndex);
 				fragColor = colorStack[i];
-				gl_Position = cameraMatrix * model * vec4(aPosition, 1.0);
+				gl_Position = cameraMatrix * vec4(aPosition, 1.0);
 			}
 		`;
 	}
@@ -54,7 +53,6 @@ class OpenGL {
 		
 		this.aPositionLoc = gl.getAttribLocation(this.program, "aPosition");
 		this.aColorIndexLoc = gl.getAttribLocation(this.program, "aColorIndex");
-		this.modelMatrixLocation = gl.getUniformLocation(this.program, "model");
 		this.cameraMatrixLocation = gl.getUniformLocation(this.program, "cameraMatrix");
 		this.colorStackLocation = gl.getUniformLocation(this.program, "colorStack");
 		this.colorStackLengthLocation = gl.getUniformLocation(this.program, "colorStackLength");
@@ -119,7 +117,6 @@ class OpenGL {
 			gl.canvas.width,
 			gl.canvas.height
 		); 
-		gl.uniformMatrix4fv(this.modelMatrixLocation, false, this.camera.rotateModel(time));
 		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrix);
 		gl.uniform3fv(this.colorStackLocation, this.colors);
 		gl.uniform1i(this.colorStackLengthLocation, this.colors.length);

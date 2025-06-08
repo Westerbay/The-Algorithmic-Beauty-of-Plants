@@ -12,6 +12,7 @@ class Option {
 		this.lengthInput = document.getElementById("length");
 		this.angleInput = document.getElementById("angle");
 		this.axiomInput = document.getElementById("axiom");
+		this.colorLimits = 16;
 	}
 	
 	addSimpleRule(symbol="", mutation="") {
@@ -44,7 +45,7 @@ class Option {
 	}
 	
 	addColor(color = "#000000") {
-		if (this.colorStack.querySelectorAll(".color-item").length >= 16) {
+		if (this.colorStack.querySelectorAll(".color-item").length >= this.colorLimits) {
 			alert("Maximum of 16 colors reached.");
 			return;
 		}

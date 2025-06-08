@@ -2,6 +2,11 @@ class Camera {
 
 	constructor() {
 		this.offsetDepth = 5;
+		this.maxZoomDistance = 0.1;
+		this.rotateSpeed = 0.02;
+		this.FOV = 60;
+		this.nearPlane = 0.1;
+		this.farPlane = 1000;
 		this.radius = 0;
 		this.yaw = 0;
 		this.pitch = 0;
@@ -20,7 +25,7 @@ class Camera {
 	}
 
 	decreaseRadius() {
-		this.radius = Math.max(this.maxDepth + 0.1, this.radius - 1);
+		this.radius = Math.max(this.maxDepth + this.maxZoomDistance, this.radius - 1);
 	}
 
 	setCenter(x, y, z) {
@@ -41,7 +46,7 @@ class Camera {
 
 	update() {
 		if (this.rotate) {
-			this.yaw += 0.01;
+			this.yaw += this.rotateSpeed;
 			if (this.yaw > 2 * Math.PI) {
 				this.yaw -= 2 * Math.PI;
 			}
@@ -52,7 +57,7 @@ class Camera {
 		this.update();
 		const aspect = width / height;
 		const projection = mat4.create();
-		mat4.perspective(projection, 60 * Math.PI / 180, aspect, 0.1, 1000);
+		mat4.perspective(projection, this.FOV * Math.PI / 180, aspect, this.nearPlane, this.farPlane);
 
 		const view = mat4.create();
 		mat4.lookAt(view, this.computePosition(), this.center, [0, 1, 0]);
@@ -61,10 +66,6 @@ class Camera {
 		mat4.multiply(matrix, projection, view);
 
 		return matrix;
-	}
-
-	rotateModel() {
-		return mat4.create();
 	}
 
 }
