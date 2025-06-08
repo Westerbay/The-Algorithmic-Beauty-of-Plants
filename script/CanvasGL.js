@@ -80,14 +80,23 @@ class CanvasGL {
 			lastY = e.clientY;
 		});
 
+		this.canvas.addEventListener("touchstart", (e) => {
+			this.dragging = true;
+			const touch = e.touches[0];
+			lastX = touch.clientX;
+			lastY = touch.clientY;
+		});
+
 		window.addEventListener("mouseup", () => {
 			this.dragging = false;
 		});
 
+		window.addEventListener("touchend", () => {
+			this.dragging = false;
+		});
+
 		window.addEventListener("mousemove", (e) => {
-			if (!this.dragging) {
-				return;
-			}
+			if (!this.dragging) return;
 
 			const dx = e.clientX - lastX;
 			const dy = e.clientY - lastY;
@@ -100,6 +109,25 @@ class CanvasGL {
 			const limit = Math.PI / 2 - 0.01;
 			this.camera.pitch = Math.max(-limit, Math.min(limit, this.camera.pitch));
 		});
+
+		window.addEventListener("touchmove", (e) => {
+			if (!this.dragging || e.touches.length === 0) return;
+
+			const touch = e.touches[0];
+			const dx = touch.clientX - lastX;
+			const dy = touch.clientY - lastY;
+			lastX = touch.clientX;
+			lastY = touch.clientY;
+
+			this.camera.yaw -= dx * this.sensibility;
+			this.camera.pitch += dy * this.sensibility;
+
+			const limit = Math.PI / 2 - 0.01;
+			this.camera.pitch = Math.max(-limit, Math.min(limit, this.camera.pitch));
+
+			e.preventDefault();
+		}, { passive: false });
+
 	}
 
 	

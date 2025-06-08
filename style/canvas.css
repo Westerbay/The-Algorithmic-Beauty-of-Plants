@@ -49,3 +49,9 @@
 #overlay input {
 	margin-right: 5px;
 }
+
+@media (max-width: 600px) {
+	#glcanvas, #overlay {
+		max-height: 70vh;
+	}
+}
