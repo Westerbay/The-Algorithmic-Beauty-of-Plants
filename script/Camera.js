@@ -7,6 +7,7 @@ class Camera {
 		this.pitch = 0;
 		this.maxDepth = 0;
 		this.center = vec3.fromValues(0, 0, 0);
+		this.rotate = false;
 	}
 
 	reset() {
@@ -38,7 +39,17 @@ class Camera {
 		return vec3.fromValues(x + this.center[0], y + this.center[1], z + this.center[2]);
 	}
 
+	update() {
+		if (this.rotate) {
+			this.yaw += 0.01;
+			if (this.yaw > 2 * Math.PI) {
+				this.yaw -= 2 * Math.PI;
+			}
+		}
+	}
+
 	computeMatrix(width, height) {
+		this.update();
 		const aspect = width / height;
 		const projection = mat4.create();
 		mat4.perspective(projection, 60 * Math.PI / 180, aspect, 0.1, 1000);

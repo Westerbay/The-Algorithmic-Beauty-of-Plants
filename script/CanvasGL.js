@@ -5,6 +5,7 @@ class CanvasGL {
 		this.zoomButton = document.getElementById("zoom");
 		this.dezoomButton = document.getElementById("dezoom");
 		this.resetCameraButton = document.getElementById("resetCamera");
+		this.rotateButton = document.getElementById("rotate");
 		this.gl = this.canvas.getContext("webgl");
 
 		if (!this.gl) {
@@ -50,6 +51,14 @@ class CanvasGL {
 				return;
 			}
 			this.camera.reset();
+		});
+
+		this.rotateButton.addEventListener("click", () => {
+			if (this.dragging) {
+				return;
+			}
+			this.camera.rotate = !this.camera.rotate;
+			this.rotateButton.classList.toggle("active");
 		});
 	}
 	
