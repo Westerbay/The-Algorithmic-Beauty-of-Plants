@@ -9,10 +9,6 @@ body, html {
 	font-family: 'Segoe UI', sans-serif;
 }
 
-article {
-	transition: all 1s ease;
-}
-
 #layout {
 	display: grid;
 	grid-template-columns: 1fr 300px;

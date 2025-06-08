@@ -26,22 +26,20 @@
 			<button id="toggleSidebar" aria-label="Hide sidebar">
 				<span class="icon"></span>
 			</button>
-			<aside class="canvas-overlay">
+			<aside id="overlay">
 				<canvas id="glcanvas"></canvas>
-				<div class="checkboxes bottom-left">
-					<label><input type="checkbox" id="option1"> Option 1</label>
-					<label><input type="checkbox" id="option2"> Option 2</label>
-					<label><input type="checkbox" id="option3"> Option 3</label>
+				<div class="checkboxes bottom-left">					
+					<label><input type="checkbox" id="rotation">Rotation</label>
 				</div>
 
-				<div class="buttons bottom-right">
-					<button class="icon-btn" id="btn1">🔍</button>
-					<button class="icon-btn" id="btn2">📷</button>
-					<button class="icon-btn" id="btn3">🔄</button>
+				<div class="buttons bottom-right">					
+					<img src="img/plus.png" alt="+" class="icon-btn" id="genUp">
+					<img src="img/minus.png" alt="-" class="icon-btn" id="genDown">
+					<img src="img/center.png" alt="-" class="icon-btn" id="center">
 				</div>
 
 				<div class="button top-right">
-					<button class="icon-btn" id="topBtn">⚙️</button>
+					<img src="img/download.png" alt="Download" class="icon-btn" id="download">
 				</div>
 			</aside>
 

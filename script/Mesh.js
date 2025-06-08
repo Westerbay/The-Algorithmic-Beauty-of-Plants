@@ -13,26 +13,29 @@ class Mesh {
 		this.maxX = -Infinity;
 		this.minY = Infinity;
 		this.maxY = -Infinity;
+		this.minZ = Infinity;
+		this.maxZ = -Infinity;
 	}
-	
-	addVertexLine(vertex, colorIndex) {
+
+	updateCenter(vertex) {
 		this.minX = Math.min(this.minX, vertex[0]);
 		this.maxX = Math.max(this.maxX, vertex[0]);
 		
 		this.minY = Math.min(this.minY, vertex[1]);
 		this.maxY = Math.max(this.maxY, vertex[1]);
-		
+
+		this.minZ = Math.min(this.minZ, vertex[2]);
+		this.maxZ = Math.max(this.maxZ, vertex[2]);
+	}
+	
+	addVertexLine(vertex, colorIndex) {		
+		this.updateCenter(vertex);
 		this.verticesLine.push(...vertex);
 		this.colorIndicesLine.push(colorIndex);
 	}
 	
 	addVertexPolygon(vertex, colorIndex) {
-		this.minX = Math.min(this.minX, vertex[0]);
-		this.maxX = Math.max(this.maxX, vertex[0]);
-		
-		this.minY = Math.min(this.minY, vertex[1]);
-		this.maxY = Math.max(this.maxY, vertex[1]);
-		
+		this.updateCenter(vertex);
 		this.verticesPolygon.push(...vertex);
 		this.colorIndicesPolygon.push(colorIndex);
 	}
@@ -80,6 +83,14 @@ class Mesh {
 	
 	centerY() {
 		return (this.minY + this.maxY) / 2;
+	}
+
+	centerZ() {
+		return (this.minZ + this.maxZ) / 2;
+	}
+
+	maxDepth() {
+		return Math.max(Math.abs(this.maxZ), Math.abs(this.minZ));
 	}
 
 }

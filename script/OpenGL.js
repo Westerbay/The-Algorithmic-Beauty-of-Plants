@@ -73,7 +73,8 @@ class OpenGL {
 	
 	loadMesh(mesh) {	
 		const gl = this.gl;		
-		this.camera.position = vec3.fromValues(mesh.centerX(), mesh.centerY(), 5);	
+		this.camera.setCenter(mesh.centerX(), mesh.centerY(), mesh.centerZ());	
+		this.camera.setMaxDepth(mesh.maxDepth());
 		
 		const verticesLine = mesh.getVertexLineBuffer();
 		const colorIndicesLine = mesh.getColorIndexLineBuffer();

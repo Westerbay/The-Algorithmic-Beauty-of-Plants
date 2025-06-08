@@ -1,55 +1,51 @@
-#glcanvas, .canvas-overlay {
+#glcanvas, #overlay {
 	width: 100%;
 	height: 100%;
 	max-height: 100vh;
 	max-width: 100vw;
 	display: block;
-	pointer-events: none;
 }
 
-.canvas-overlay {
+#overlay {
 	position: relative;
 }
 
-.canvas-overlay > div {
+#overlay > div {
 	position: absolute;
 	pointer-events: auto;
 }
 
-.bottom-left {
+#overlay .bottom-left {
 	bottom: 10px;
 	left: 10px;
-	display: flex;
-	flex-direction: column;
-	gap: 5px;
 	background: rgba(0, 0, 0, 0.5);
-	padding: 8px;
-	border-radius: 8px;
 	color: white;
 }
 
-.bottom-right {
+#overlay .bottom-right {
 	bottom: 10px;
 	right: 10px;
-	display: flex;
-	gap: 10px;
 }
 
-.top-right {
+#overlay .bottom-right, .bottom-left {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	padding: 8px;
+	border-radius: 8px;
+}
+
+#overlay .top-right {
 	top: 10px;
 	right: 10px;
 }
 
-.icon-btn {
-	background: rgba(255, 255, 255, 0.8);
-	border: none;
-	border-radius: 8px;
-	padding: 8px;
+#overlay .icon-btn {
 	cursor: pointer;
-	font-size: 1.2em;
-	transition: background 0.2s ease;
+	width: 30px;
+	height: 30px;
 }
 
-.icon-btn:hover {
-	background: rgba(255, 255, 255, 1);
+#overlay input {
+	margin-right: 5px;
 }
