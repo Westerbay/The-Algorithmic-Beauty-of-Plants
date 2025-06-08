@@ -23,6 +23,7 @@ class CanvasGL {
 	}
 
 	initOptions() {
+		this.camera.rotate = this.rotateButton.checked;
 		this.canvas.addEventListener("wheel", (e) => {
 			e.preventDefault();
 
