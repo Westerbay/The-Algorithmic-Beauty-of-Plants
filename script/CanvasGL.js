@@ -21,6 +21,16 @@ class CanvasGL {
 	}
 
 	initOptions() {
+		this.canvas.addEventListener("wheel", (e) => {
+			e.preventDefault();
+
+			if (e.deltaY > 0) {
+				this.camera.increaseRadius(); 
+			} else {
+				this.camera.decreaseRadius(); 
+			}
+		});
+
 		this.dezoomButton.addEventListener("click", () => {
 			if (this.dragging) {
 				return;

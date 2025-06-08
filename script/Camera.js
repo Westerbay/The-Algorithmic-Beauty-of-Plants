@@ -5,6 +5,7 @@ class Camera {
 		this.radius = 0;
 		this.yaw = 0;
 		this.pitch = 0;
+		this.maxDepth = 0;
 		this.center = vec3.fromValues(0, 0, 0);
 	}
 
@@ -18,7 +19,7 @@ class Camera {
 	}
 
 	decreaseRadius() {
-		this.radius = Math.max(0, this.radius - 1);
+		this.radius = Math.max(this.maxDepth + 0.1, this.radius - 1);
 	}
 
 	setCenter(x, y, z) {
@@ -27,6 +28,7 @@ class Camera {
 
 	setMaxDepth(depth) {
 		this.radius = depth + this.offsetDepth;
+		this.maxDepth = depth;
 	}
 
 	computePosition() {
