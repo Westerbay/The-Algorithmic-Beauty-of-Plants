@@ -44,3 +44,10 @@
 #layout.collapsed #toggleSidebar {
     right: 10px;
 }
+
+@media (max-width: 600px) {
+	#toggleSidebar {
+		display: none;
+	}
+}
+

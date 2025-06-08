@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8">
 		<title>ABOP</title>
+		<meta charset="UTF-8">		
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<script src="libs/gl-matrix-min.js"></script>
 		<script src="script/Mesh.js"></script>
 		<script src="script/TurtleState.js"></script>
@@ -21,11 +22,29 @@
 		<link href='style/toggle.css' rel='stylesheet'>
 	</head>
 	<body>
-		<article id="layout">
+		<div id="layout">
 			<button id="toggleSidebar" aria-label="Hide sidebar">
 				<span class="icon"></span>
 			</button>
-			<canvas id="glcanvas"></canvas>
+			<aside class="canvas-overlay">
+				<canvas id="glcanvas"></canvas>
+				<div class="checkboxes bottom-left">
+					<label><input type="checkbox" id="option1"> Option 1</label>
+					<label><input type="checkbox" id="option2"> Option 2</label>
+					<label><input type="checkbox" id="option3"> Option 3</label>
+				</div>
+
+				<div class="buttons bottom-right">
+					<button class="icon-btn" id="btn1">🔍</button>
+					<button class="icon-btn" id="btn2">📷</button>
+					<button class="icon-btn" id="btn3">🔄</button>
+				</div>
+
+				<div class="button top-right">
+					<button class="icon-btn" id="topBtn">⚙️</button>
+				</div>
+			</aside>
+
 			<section id="sidebar">
 				<h2>LSystems</h2>
 				<form id="abop">
@@ -56,19 +75,19 @@
 						<input type="text" id="axiom" name="axiom" required>
 					</aside>
 					<aside>
-						<label for="rules">Rules :</label>
+						<label for="addRule">Rules :</label>
 						<div id="rulesContainer" class="rules-table"></div>
 						<button type="button" class="add-btn" id="addRule">Add a rule</button>
 					</aside>
 					<aside>
-						<label for="rules">Color stack :</label>
+						<label for="addColor">Color stack :</label>
 						<div id="colorStack" class="color-stack"></div>
 						<button type="button" class="add-btn" id="addColor">Add a color</button>
 					</aside>
 					<button type="submit">Draw</button>
 				</form>
 			</section>
-		</article>
+		</div>
 		<script src="script/main.js"></script>
 	</body>
 </html>
