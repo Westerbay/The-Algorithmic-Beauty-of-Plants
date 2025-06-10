@@ -53,19 +53,32 @@ class Camera {
 		}
 	}
 
-	computeMatrix(width, height) {
+	computeMatrices(width, height) {
 		this.update();
 		const aspect = width / height;
 		const projection = mat4.create();
 		mat4.perspective(projection, this.FOV * Math.PI / 180, aspect, this.nearPlane, this.farPlane);
 
-		const view = mat4.create();
-		mat4.lookAt(view, this.computePosition(), this.center, [0, 1, 0]);
+		const viewWorld = mat4.create();
+		mat4.lookAt(viewWorld, this.computePosition(), this.center, [0, 1, 0]);
 
-		const matrix = mat4.create();
-		mat4.multiply(matrix, projection, view);
+		const world = mat4.create();
+		mat4.multiply(world, projection, viewWorld);
 
-		return matrix;
+		const viewBackground = mat4.create();
+		mat4.copy(viewBackground, viewWorld);
+		viewBackground[15] = 1;
+		viewBackground[14] = 0; 
+		viewBackground[13] = 0;
+		viewBackground[12] = 0;
+		viewBackground[11] = 0;
+		viewBackground[3] = 0;
+		viewBackground[7] = 0;
+
+		const background = mat4.create();
+		mat4.multiply(background, projection, viewBackground);
+
+		return [background, world];
 	}
 
 }

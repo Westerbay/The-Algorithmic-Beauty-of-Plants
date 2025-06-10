@@ -2,10 +2,24 @@ class OpenGL {
 
 	constructor(glcontext) {
 		this.gl = glcontext;
-		this.camera = new Camera();
-		this.colors = [];
 		this.initShader();
 		this.gl.getExtension('OES_element_index_uint');
+
+		this.colors = [];	
+		this.camera = new Camera();			
+		this.background = new Background(glcontext);	
+		this.initBackground();	
+	}
+
+	initBackground() {
+		const gl = this.gl;
+		this.vertexBackgroundBuffer = gl.createBuffer();
+		this.elementBackgroundBuffer = gl.createBuffer();
+		this.colorsBackgroundBuffer = gl.createBuffer();
+		this.configBuffer(gl.ARRAY_BUFFER, this.vertexBackgroundBuffer, this.background.vertices);
+		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementBackgroundBuffer, this.background.elements);
+		this.configBuffer(gl.ARRAY_BUFFER, this.colorsBackgroundBuffer, this.background.colorIndices);
+		this.elementBackgroundCount = this.background.elements.length;
 	}
 	
 	getVertexShader() {
@@ -107,20 +121,38 @@ class OpenGL {
 		gl.bufferData(type, data, gl.STATIC_DRAW);
 	}
 	
-	render(time) {		
+	render() {		
 		const gl = this.gl;		
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 		gl.clearColor(1, 1, 1, 1);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 		
-		const cameraMatrix = this.camera.computeMatrix(
+		const cameraMatrices = this.camera.computeMatrices(
 			gl.canvas.width,
 			gl.canvas.height
 		); 
-		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrix);
+		const cameraMatrixBackground = cameraMatrices[0];
+		const cameraMatrixWorld = cameraMatrices[1];		
+
+		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrixBackground);
+		gl.uniform3fv(this.colorStackLocation, this.background.colors);
+		gl.uniform1i(this.colorStackLengthLocation, this.background.colors.length);
+		this.backgroundRendering(gl);
+
+		//Mesh rendering
 		gl.uniform3fv(this.colorStackLocation, this.colors);
+		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrixWorld);
 		gl.uniform1i(this.colorStackLengthLocation, this.colors.length);
-		
+		this.meshRendering(gl);
+	}
+
+	backgroundRendering(gl) {
+		this.bindVBO(this.vertexBackgroundBuffer, this.aPositionLoc, 3);
+		this.bindVBO(this.colorsBackgroundBuffer, this.aColorIndexLoc, 1);		
+		this.drawMode(this.elementBackgroundBuffer, gl.TRIANGLES, this.elementBackgroundCount);
+	}
+
+	meshRendering(gl) {
 		this.bindVBO(this.vertexLineBuffer, this.aPositionLoc, 3);
 		this.bindVBO(this.colorIndexLineBuffer, this.aColorIndexLoc, 1);		
 		this.drawMode(this.elementLineBuffer, gl.LINES, this.elementLineCount);
