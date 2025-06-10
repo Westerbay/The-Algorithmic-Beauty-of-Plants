@@ -1,11 +1,12 @@
 class Background {
 
     constructor() {
-        this.initMesh();
+        this.initSky();
+        this.initGround();
     }
 
-    initMesh() {
-		this.vertices = new Float32Array([
+    initSky() {
+		this.skyVertices = new Float32Array([
 			-1.0, -1.0, 1.0, // 0
 			1.0, -1.0, 1.0, // 1
 			1.0, 1.0, 1.0, // 2
@@ -15,7 +16,7 @@ class Background {
 			1.0, 1.0, -1.0, // 6
 			-1.0, 1.0, -1.0 // 7
 		]);
-		this.elements = new Uint32Array([
+		this.skyElements = new Uint32Array([
 			0, 1, 2, 0, 2, 3,
 			4, 5, 6, 4, 6, 7,
 			0, 1, 5, 0, 5, 4,
@@ -27,10 +28,29 @@ class Background {
 		const colors = [];
 		colors.push([0.89, 0.97, 0.98]); // Very Light Blue
 		colors.push([0.53, 0.81, 0.92]); // Light Blue
-		this.colors = new Float32Array(colors.flat());
-		this.colorIndices = new Float32Array([
+		this.skyColors = new Float32Array(colors.flat());
+		this.skyColorIndices = new Float32Array([
 			0, 0, 1, 1, 0, 0, 1, 1
 		]);
 	}
+
+    initGround() {
+        this.groundVertices = new Float32Array([
+			-1000.0, 0, 1000.0, // 0
+			1000.0, 0, 1000.0, // 1
+			1000.0, 0, -1000.0, // 2
+			-1000.0, 0, -1000.0, // 3
+		]);
+		this.groundElements = new Uint32Array([
+			0, 1, 2, 0, 2, 3
+		]);
+
+		const colors = [];
+		colors.push([0.8, 0.8, 0.8]); // Light Gray
+		this.groundColors = new Float32Array(colors.flat());
+		this.groundColorIndices = new Float32Array([
+			0, 0, 0, 0
+		]);
+    }
 
 }

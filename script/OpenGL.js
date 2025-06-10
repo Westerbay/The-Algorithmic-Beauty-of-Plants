@@ -8,18 +8,30 @@ class OpenGL {
 		this.colors = [];	
 		this.camera = new Camera();			
 		this.background = new Background(glcontext);	
-		this.initBackground();	
+		this.initSky();	
+		this.initGround();
 	}
 
-	initBackground() {
+	initGround() {
 		const gl = this.gl;
-		this.vertexBackgroundBuffer = gl.createBuffer();
-		this.elementBackgroundBuffer = gl.createBuffer();
-		this.colorsBackgroundBuffer = gl.createBuffer();
-		this.configBuffer(gl.ARRAY_BUFFER, this.vertexBackgroundBuffer, this.background.vertices);
-		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementBackgroundBuffer, this.background.elements);
-		this.configBuffer(gl.ARRAY_BUFFER, this.colorsBackgroundBuffer, this.background.colorIndices);
-		this.elementBackgroundCount = this.background.elements.length;
+		this.vertexGroundBuffer = gl.createBuffer();
+		this.elementGroundBuffer = gl.createBuffer();
+		this.colorGroundBuffer = gl.createBuffer();
+		this.configBuffer(gl.ARRAY_BUFFER, this.vertexGroundBuffer, this.background.groundVertices);
+		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementGroundBuffer, this.background.groundElements);
+		this.configBuffer(gl.ARRAY_BUFFER, this.colorGroundBuffer, this.background.groundColorIndices);
+		this.elementGroundCount = this.background.groundElements.length;
+	}
+
+	initSky() {
+		const gl = this.gl;
+		this.vertexSkyBuffer = gl.createBuffer();
+		this.elementSkyBuffer = gl.createBuffer();
+		this.colorSkyBuffer = gl.createBuffer();
+		this.configBuffer(gl.ARRAY_BUFFER, this.vertexSkyBuffer, this.background.skyVertices);
+		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementSkyBuffer, this.background.skyElements);
+		this.configBuffer(gl.ARRAY_BUFFER, this.colorSkyBuffer, this.background.skyColorIndices);
+		this.elementSkyCount = this.background.skyElements.length;
 	}
 	
 	getVertexShader() {
@@ -125,7 +137,7 @@ class OpenGL {
 		const gl = this.gl;		
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 		gl.clearColor(1, 1, 1, 1);
-		gl.clear(gl.COLOR_BUFFER_BIT);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		
 		const cameraMatrices = this.camera.computeMatrices(
 			gl.canvas.width,
@@ -134,22 +146,35 @@ class OpenGL {
 		const cameraMatrixBackground = cameraMatrices[0];
 		const cameraMatrixWorld = cameraMatrices[1];		
 
+		//Scene rendering
+		this.gl.disable(this.gl.DEPTH_TEST);
 		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrixBackground);
-		gl.uniform3fv(this.colorStackLocation, this.background.colors);
-		gl.uniform1i(this.colorStackLengthLocation, this.background.colors.length);
-		this.backgroundRendering(gl);
+		gl.uniform3fv(this.colorStackLocation, this.background.skyColors);
+		gl.uniform1i(this.colorStackLengthLocation, this.background.skyColors.length);
+		this.skyRendering(gl);
+
+		this.gl.enable(this.gl.DEPTH_TEST);
+		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrixWorld);
+		gl.uniform3fv(this.colorStackLocation, this.background.groundColors);
+		gl.uniform1i(this.colorStackLengthLocation, this.background.groundColors.length);
+		this.groundRendering(gl);
 
 		//Mesh rendering
 		gl.uniform3fv(this.colorStackLocation, this.colors);
-		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrixWorld);
 		gl.uniform1i(this.colorStackLengthLocation, this.colors.length);
 		this.meshRendering(gl);
 	}
 
-	backgroundRendering(gl) {
-		this.bindVBO(this.vertexBackgroundBuffer, this.aPositionLoc, 3);
-		this.bindVBO(this.colorsBackgroundBuffer, this.aColorIndexLoc, 1);		
-		this.drawMode(this.elementBackgroundBuffer, gl.TRIANGLES, this.elementBackgroundCount);
+	groundRendering(gl) {
+		this.bindVBO(this.vertexGroundBuffer, this.aPositionLoc, 3);
+		this.bindVBO(this.colorGroundBuffer, this.aColorIndexLoc, 1);		
+		this.drawMode(this.elementGroundBuffer, gl.TRIANGLES, this.elementGroundCount);
+	}
+
+	skyRendering(gl) {
+		this.bindVBO(this.vertexSkyBuffer, this.aPositionLoc, 3);
+		this.bindVBO(this.colorSkyBuffer, this.aColorIndexLoc, 1);		
+		this.drawMode(this.elementSkyBuffer, gl.TRIANGLES, this.elementSkyCount);
 	}
 
 	meshRendering(gl) {
