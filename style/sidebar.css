@@ -85,6 +85,7 @@
 
 #sidebar .color-item input {
 	width: 80%;
+	min-height: 32px;
 }
 
 #sidebar .color-box {
