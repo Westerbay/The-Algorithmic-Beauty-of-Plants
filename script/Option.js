@@ -12,7 +12,28 @@ class Option {
 		this.lengthInput = document.getElementById("length");
 		this.angleInput = document.getElementById("angle");
 		this.axiomInput = document.getElementById("axiom");
+
+		this.lastLength = 0;
+		this.lastAngleRotation = 0;
+		this.lastAxiom = "";
+		this.lastRules = new Rules();
 		this.colorLimits = 16;
+		this.addEventListeners();
+	}
+
+	addEventListeners() {
+		this.generationInput.addEventListener("change", () => {
+			this.lastGeneration = parseInt(this.generationInput.value, 10);
+			this.draw(this.lastGeneration, this.lastLength, this.lastAngleRotation, this.lastAxiom, this.lastRules);
+		});
+		this.lengthInput.addEventListener("change", () => {
+			this.lastLength = parseFloat(this.lengthInput.value);
+			this.draw(this.lastGeneration, this.lastLength, this.lastAngleRotation, this.lastAxiom, this.lastRules);
+		});
+		this.angleInput.addEventListener("change", () => {
+			this.lastAngleRotation = parseFloat(this.angleInput.value);
+			this.draw(this.lastGeneration, this.lastLength, this.lastAngleRotation, this.lastAxiom, this.lastRules);
+		});
 	}
 	
 	addSimpleRule(symbol="", mutation="") {
@@ -98,6 +119,12 @@ class Option {
 	}
 	
 	draw(generation, length, angleRotation, axiom, rules) {
+		this.lastGeneration = generation;
+		this.lastLength = length;
+		this.lastAngleRotation = angleRotation;
+		this.lastAxiom = axiom;
+		this.lastRules = rules;
+		
 		const lSystem = new LSystem(axiom, rules);
 		const turtleState = new TurtleState(length * 0.01, vec3.fromValues(0, 0, 0), 0);
 		
