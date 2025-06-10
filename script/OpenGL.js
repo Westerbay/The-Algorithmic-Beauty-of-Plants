@@ -5,6 +5,7 @@ class OpenGL {
 		this.initShader();
 		this.gl.getExtension('OES_element_index_uint');
 
+		this.modelGround = mat4.create();
 		this.colors = [];	
 		this.camera = new Camera();			
 		this.background = new Background(glcontext);	
@@ -39,6 +40,7 @@ class OpenGL {
 			attribute vec3 aPosition;
 			attribute float aColorIndex;
 			
+			uniform mat4 model;
 			uniform mat4 cameraMatrix;
 			uniform vec3 colorStack[16];
 			uniform int colorStackLength;
@@ -48,7 +50,7 @@ class OpenGL {
 			void main() {
 				int i = int(aColorIndex);
 				fragColor = colorStack[i];
-				gl_Position = cameraMatrix * vec4(aPosition, 1.0);
+				gl_Position = cameraMatrix * model * vec4(aPosition, 1.0);
 			}
 		`;
 	}
@@ -80,6 +82,7 @@ class OpenGL {
 		this.aPositionLoc = gl.getAttribLocation(this.program, "aPosition");
 		this.aColorIndexLoc = gl.getAttribLocation(this.program, "aColorIndex");
 		this.cameraMatrixLocation = gl.getUniformLocation(this.program, "cameraMatrix");
+		this.modelLocation = gl.getUniformLocation(this.program, "model");
 		this.colorStackLocation = gl.getUniformLocation(this.program, "colorStack");
 		this.colorStackLengthLocation = gl.getUniformLocation(this.program, "colorStackLength");
 	}
@@ -100,6 +103,9 @@ class OpenGL {
 		this.camera.setCenter(mesh.centerX(), mesh.centerY(), mesh.centerZ());	
 		this.camera.setMaxDepth(mesh.maxDepth());
 		this.camera.setMinHeight(mesh.minY);
+
+		const mat = mat4.create();
+		mat4.translate(this.modelGround, mat, [0, mesh.minY, 0]);
 		
 		const verticesLine = mesh.getVertexLineBuffer();
 		const colorIndicesLine = mesh.getColorIndexLineBuffer();
@@ -149,18 +155,21 @@ class OpenGL {
 
 		//Scene rendering
 		this.gl.disable(this.gl.DEPTH_TEST);
+		gl.uniformMatrix4fv(this.modelLocation, false, mat4.create());
 		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrixBackground);
 		gl.uniform3fv(this.colorStackLocation, this.background.skyColors);
 		gl.uniform1i(this.colorStackLengthLocation, this.background.skyColors.length);
 		this.skyRendering(gl);
 
 		this.gl.enable(this.gl.DEPTH_TEST);
+		gl.uniformMatrix4fv(this.modelLocation, false, this.modelGround);
 		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrixWorld);
 		gl.uniform3fv(this.colorStackLocation, this.background.groundColors);
 		gl.uniform1i(this.colorStackLengthLocation, this.background.groundColors.length);
 		this.groundRendering(gl);
 
 		//Mesh rendering
+		gl.uniformMatrix4fv(this.modelLocation, false, mat4.create());
 		gl.uniform3fv(this.colorStackLocation, this.colors);
 		gl.uniform1i(this.colorStackLengthLocation, this.colors.length);
 		this.meshRendering(gl);
