@@ -11,6 +11,7 @@ class Camera {
 		this.yaw = 0;
 		this.pitch = 0;
 		this.maxDepth = 0;
+		this.minHeight = 0;
 		this.center = vec3.fromValues(0, 0, 0);
 		this.rotate = false;
 	}
@@ -37,10 +38,17 @@ class Camera {
 		this.maxDepth = depth;
 	}
 
+	setMinHeight(height) {
+		this.minHeight = height;
+	}
+
 	computePosition() {
-		const x = this.radius * Math.cos(this.pitch) * Math.sin(this.yaw);
-		const y = this.radius * Math.sin(this.pitch);
-		const z = this.radius * Math.cos(this.pitch) * Math.cos(this.yaw);
+		var x = this.radius * Math.cos(this.pitch) * Math.sin(this.yaw);
+		var y = this.radius * Math.sin(this.pitch);
+		var z = this.radius * Math.cos(this.pitch) * Math.cos(this.yaw);
+		if (y < this.minHeight) {
+			y = this.minHeight;
+		}
 		return vec3.fromValues(x + this.center[0], y + this.center[1], z + this.center[2]);
 	}
 

@@ -99,6 +99,7 @@ class OpenGL {
 		const gl = this.gl;		
 		this.camera.setCenter(mesh.centerX(), mesh.centerY(), mesh.centerZ());	
 		this.camera.setMaxDepth(mesh.maxDepth());
+		this.camera.setMinHeight(mesh.minY);
 		
 		const verticesLine = mesh.getVertexLineBuffer();
 		const colorIndicesLine = mesh.getColorIndexLineBuffer();
