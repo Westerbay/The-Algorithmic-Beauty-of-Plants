@@ -20,7 +20,7 @@ class Background {
 			new Float32Array([1, -1, -1, 1, -1, 1, 1, 1, 1, 1, 1, -1]), // +X (right)
 			new Float32Array([-1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, 1]), // -X (left)
 			new Float32Array([1, 1, 1, -1, 1, 1, -1, 1, -1, 1, 1, -1]), // +Y (top)
-			new Float32Array([-1, -1, -1, 1, -1, -1, 1, -1, 1, -1, -1, 1]) // -Y (bottom)
+			new Float32Array([1, -1, -1, -1, -1, -1, -1, -1, 1, 1, -1, 1]) // -Y (bottom)
 		];
 
 		this.skyNormals = new Float32Array([0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1]);
@@ -50,9 +50,9 @@ class Background {
 		]);
 		this.groundUVs = new Float32Array([
 			0, 0, // 0
-			150, 0, // 1
-			150, 150, // 2
-			0, 150  // 3
+			200, 0, // 1
+			200, 200, // 2
+			0, 200  // 3
 		]);
 		this.groundElements = new Uint32Array([
 			0, 1, 2, 0, 2, 3

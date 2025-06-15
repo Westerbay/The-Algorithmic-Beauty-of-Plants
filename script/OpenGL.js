@@ -3,8 +3,7 @@ class OpenGL {
 	constructor(glcontext) {
 		this.gl = glcontext;
 		this.gl.getExtension('OES_element_index_uint');
-		this.ready = false;
-		this.textureSkyTop = [0, 0, 0, 0, 0, 0];
+		this.textureReady = false;
 
 		this.shader = new Shader();
 		this.systemProgram = this.gl.createProgram();
@@ -206,7 +205,7 @@ class OpenGL {
 		for (let i = 0; i < 6; i++) {
 			gl.bindTexture(gl.TEXTURE_2D, this.textureSkyTop[i]);
 		}
-		this.ready = true;
+		this.textureReady = true;
 	}
 
 	render() {		
@@ -223,12 +222,14 @@ class OpenGL {
 		const cameraMatrixWorld = cameraMatrices[1];		
 
 		//Sky rendering
-		this.gl.disable(this.gl.DEPTH_TEST);		
-		this.skyRendering(gl, cameraMatrixBackground);
+		if (this.textureReady) {
+			this.gl.disable(this.gl.DEPTH_TEST);		
+			this.skyRendering(gl, cameraMatrixBackground);
 
-		//Ground rendering
-		this.gl.enable(this.gl.DEPTH_TEST);
-		this.groundRendering(gl, cameraMatrixWorld);
+			//Ground rendering
+			this.gl.enable(this.gl.DEPTH_TEST);
+			this.groundRendering(gl, cameraMatrixWorld);
+		}
 
 		//Mesh rendering
 		this.meshRendering(gl, cameraMatrixWorld);
@@ -264,9 +265,6 @@ class OpenGL {
 		this.bindVBO(this.tangentSkyBuffer, this.locationsBackground['aTangent'], 3);
 		this.bindVBO(this.uvSkyBuffer, this.locationsBackground['aUV'], 2);
 
-		if (!this.ready) {
-			return;
-		}
 		for (let i = 0; i < 6; i++) {
 			this.bindVBO(this.vertexSkyBuffers[i], this.locationsBackground['aPosition'], 3);
 			gl.bindTexture(gl.TEXTURE_2D, this.textureSkyTop[i]);
