@@ -2,13 +2,32 @@ class OpenGL {
 
 	constructor(glcontext) {
 		this.gl = glcontext;
-		this.initShader();
 		this.gl.getExtension('OES_element_index_uint');
+
+		this.shader = new Shader();
+		this.systemProgram = this.gl.createProgram();
+		this.locationsSystem = this.initShader(
+			this.systemProgram,
+			this.shader.getVertexShaderSystem(),
+			this.shader.getFragmentShaderSystem(),
+			this.shader.getAttributesSystem(),
+			this.shader.getUniformsSystem()
+		);	
+		
+		this.backgroundProgram = this.gl.createProgram();
+		this.locationsBackground = this.initShader(
+			this.backgroundProgram,
+			this.shader.getVertexShaderBackground(),
+			this.shader.getFragmentShaderBackground(),
+			this.shader.getAttributesBackground(),
+			this.shader.getUniformsBackground()
+		);
 
 		this.modelGround = mat4.create();
 		this.colors = [];	
 		this.camera = new Camera();			
-		this.background = new Background(glcontext);	
+		this.background = new Background(glcontext);
+		this.initTextures();
 		this.initSky();	
 		this.initGround();
 	}
@@ -16,11 +35,15 @@ class OpenGL {
 	initGround() {
 		const gl = this.gl;
 		this.vertexGroundBuffer = gl.createBuffer();
+		this.normalGroundBuffer = gl.createBuffer();
+		this.tangentGroundBuffer = gl.createBuffer();
+		this.uvGroundBuffer = gl.createBuffer();
 		this.elementGroundBuffer = gl.createBuffer();
-		this.colorGroundBuffer = gl.createBuffer();
 		this.configBuffer(gl.ARRAY_BUFFER, this.vertexGroundBuffer, this.background.groundVertices);
+		this.configBuffer(gl.ARRAY_BUFFER, this.normalGroundBuffer, this.background.groundNormals);
+		this.configBuffer(gl.ARRAY_BUFFER, this.tangentGroundBuffer, this.background.groundTangent);
+		this.configBuffer(gl.ARRAY_BUFFER, this.uvGroundBuffer, this.background.groundUVs);
 		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementGroundBuffer, this.background.groundElements);
-		this.configBuffer(gl.ARRAY_BUFFER, this.colorGroundBuffer, this.background.groundColorIndices);
 		this.elementGroundCount = this.background.groundElements.length;
 	}
 
@@ -34,57 +57,40 @@ class OpenGL {
 		this.configBuffer(gl.ARRAY_BUFFER, this.colorSkyBuffer, this.background.skyColorIndices);
 		this.elementSkyCount = this.background.skyElements.length;
 	}
-	
-	getVertexShader() {
-		return `
-			attribute vec3 aPosition;
-			attribute float aColorIndex;
-			
-			uniform mat4 model;
-			uniform mat4 cameraMatrix;
-			uniform vec3 colorStack[16];
-			uniform int colorStackLength;
-			
-			varying vec3 fragColor;
-			
-			void main() {
-				int i = int(aColorIndex);
-				fragColor = colorStack[i];
-				gl_Position = cameraMatrix * model * vec4(aPosition, 1.0);
-			}
-		`;
-	}
-	
-	getFragmentShader() {
-		return `
-			precision mediump float;
-			varying vec3 fragColor;			
-			
-			void main() {
-				gl_FragColor = vec4(fragColor, 1.0);
-			}
-		`;
-	}
-	
-	initShader() {
+
+	enableAnisotropicFilter(texture) {
 		const gl = this.gl;	
-		const vsSource = this.getVertexShader();
-		const fsSource = this.getFragmentShader();	
+		const ext = gl.getExtension('EXT_texture_filter_anisotropic')
+			|| gl.getExtension('MOZ_EXT_texture_filter_anisotropic')
+			|| gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic');
+
+		if (ext) {
+			gl.bindTexture(gl.TEXTURE_2D, texture);
+			const maxAniso = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+			gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+		}
+	}
+
+	
+	initShader(program, vsSource, fsSource, attributes, uniforms) {
+		const gl = this.gl;	
 		const vs = this.compileShader(vsSource, gl.VERTEX_SHADER);
 		const fs = this.compileShader(fsSource, gl.FRAGMENT_SHADER);
 		
-		this.program = gl.createProgram();
-		gl.attachShader(this.program, vs);
-		gl.attachShader(this.program, fs);
-		gl.linkProgram(this.program);
-		gl.useProgram(this.program);
+		gl.attachShader(program, vs);
+		gl.attachShader(program, fs);
+		gl.linkProgram(program);
+		gl.useProgram(program);
 		
-		this.aPositionLoc = gl.getAttribLocation(this.program, "aPosition");
-		this.aColorIndexLoc = gl.getAttribLocation(this.program, "aColorIndex");
-		this.cameraMatrixLocation = gl.getUniformLocation(this.program, "cameraMatrix");
-		this.modelLocation = gl.getUniformLocation(this.program, "model");
-		this.colorStackLocation = gl.getUniformLocation(this.program, "colorStack");
-		this.colorStackLengthLocation = gl.getUniformLocation(this.program, "colorStackLength");
+		var locations = {};
+		for (let i = 0; i < attributes.length; i ++) {
+			locations[attributes[i]] = gl.getAttribLocation(program, attributes[i]);
+		}
+		for (let i = 0; i < uniforms.length; i ++) {
+			locations[uniforms[i]] = gl.getUniformLocation(program, uniforms[i]);
+		}
+
+		return locations;
 	}
 	
 	compileShader(src, type) {
@@ -139,7 +145,39 @@ class OpenGL {
 		gl.bindBuffer(type, buffer);
 		gl.bufferData(type, data, gl.STATIC_DRAW);
 	}
-	
+
+	createTexture(image) {
+		const gl = this.gl;	
+		const texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+
+		gl.texImage2D(
+			gl.TEXTURE_2D,
+			0,
+			gl.RGBA,
+			gl.RGBA,
+			gl.UNSIGNED_BYTE,
+			image
+		);
+
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+		gl.generateMipmap(gl.TEXTURE_2D);
+
+		return texture;
+	}
+
+	async initTextures() {
+		const image = await this.background.groundImage;
+		this.textureGround = this.createTexture(image);
+		this.enableAnisotropicFilter(this.textureGround);
+		this.gl.activeTexture(this.gl.TEXTURE0);
+		this.gl.bindTexture(this.gl.TEXTURE_2D, this.textureGround);
+	}
+
+
 	render() {		
 		const gl = this.gl;		
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -153,47 +191,58 @@ class OpenGL {
 		const cameraMatrixBackground = cameraMatrices[0];
 		const cameraMatrixWorld = cameraMatrices[1];		
 
-		//Scene rendering
-		this.gl.disable(this.gl.DEPTH_TEST);
-		gl.uniformMatrix4fv(this.modelLocation, false, mat4.create());
-		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrixBackground);
-		gl.uniform3fv(this.colorStackLocation, this.background.skyColors);
-		gl.uniform1i(this.colorStackLengthLocation, this.background.skyColors.length);
-		this.skyRendering(gl);
+		//Sky rendering
+		this.gl.disable(this.gl.DEPTH_TEST);		
+		this.skyRendering(gl, cameraMatrixBackground);
 
+		//Ground rendering
 		this.gl.enable(this.gl.DEPTH_TEST);
-		gl.uniformMatrix4fv(this.modelLocation, false, this.modelGround);
-		gl.uniformMatrix4fv(this.cameraMatrixLocation, false, cameraMatrixWorld);
-		gl.uniform3fv(this.colorStackLocation, this.background.groundColors);
-		gl.uniform1i(this.colorStackLengthLocation, this.background.groundColors.length);
-		this.groundRendering(gl);
+		this.groundRendering(gl, cameraMatrixWorld);
 
 		//Mesh rendering
-		gl.uniformMatrix4fv(this.modelLocation, false, mat4.create());
-		gl.uniform3fv(this.colorStackLocation, this.colors);
-		gl.uniform1i(this.colorStackLengthLocation, this.colors.length);
-		this.meshRendering(gl);
+		this.meshRendering(gl, cameraMatrixWorld);
 	}
 
-	groundRendering(gl) {
-		this.bindVBO(this.vertexGroundBuffer, this.aPositionLoc, 3);
-		this.bindVBO(this.colorGroundBuffer, this.aColorIndexLoc, 1);		
+	groundRendering(gl, camera) {
+		gl.useProgram(this.backgroundProgram);
+		gl.uniformMatrix4fv(this.locationsBackground['model'], false, this.modelGround);
+		gl.uniformMatrix4fv(this.locationsBackground['cameraMatrix'], false, camera);
+		gl.uniform1i(this.locationsBackground['uDiffuseMap'], 0);
+		gl.uniform1i(this.locationsBackground['uNormalMap'], 1);
+		gl.uniform3fv(this.locationsBackground['uLightPos'], this.background.lightPosition);
+  		gl.uniform3fv(this.locationsBackground['uViewPos'], this.camera.computePosition());
+  		gl.uniform1i(this.locationsBackground['uEnableLighting'], false);
+		this.bindVBO(this.vertexGroundBuffer, this.locationsBackground['aPosition'], 3);
+		this.bindVBO(this.normalGroundBuffer, this.locationsBackground['aNormal'], 3);
+		this.bindVBO(this.tangentGroundBuffer, this.locationsBackground['aTangent'], 3);
+		this.bindVBO(this.uvGroundBuffer, this.locationsBackground['aUV'], 2);
 		this.drawMode(this.elementGroundBuffer, gl.TRIANGLES, this.elementGroundCount);
 	}
 
-	skyRendering(gl) {
-		this.bindVBO(this.vertexSkyBuffer, this.aPositionLoc, 3);
-		this.bindVBO(this.colorSkyBuffer, this.aColorIndexLoc, 1);		
+	skyRendering(gl, camera) {
+		gl.useProgram(this.systemProgram);
+		gl.uniformMatrix4fv(this.locationsSystem['model'], false, mat4.create());
+		gl.uniformMatrix4fv(this.locationsSystem['cameraMatrix'], false, camera);
+		gl.uniform3fv(this.locationsSystem['colorStack'], this.background.skyColors);
+		gl.uniform1i(this.locationsSystem['colorStackLength'], this.background.skyColors.length);
+		this.bindVBO(this.vertexSkyBuffer, this.locationsSystem['aPosition'], 3);
+		this.bindVBO(this.colorSkyBuffer, this.locationsSystem['aColorIndex'], 1);
 		this.drawMode(this.elementSkyBuffer, gl.TRIANGLES, this.elementSkyCount);
 	}
 
-	meshRendering(gl) {
-		this.bindVBO(this.vertexLineBuffer, this.aPositionLoc, 3);
-		this.bindVBO(this.colorIndexLineBuffer, this.aColorIndexLoc, 1);		
+	meshRendering(gl, camera) {
+		gl.useProgram(this.systemProgram);
+		gl.uniformMatrix4fv(this.locationsSystem['model'], false, mat4.create());
+		gl.uniformMatrix4fv(this.locationsSystem['cameraMatrix'], false, camera);
+		gl.uniform3fv(this.locationsSystem['colorStack'], this.colors);
+		gl.uniform1i(this.locationsSystem['colorStackLength'], this.colors.length);
+
+		this.bindVBO(this.vertexLineBuffer, this.locationsSystem['aPosition'], 3);
+		this.bindVBO(this.colorIndexLineBuffer, this.locationsSystem['aColorIndex'], 1);
 		this.drawMode(this.elementLineBuffer, gl.LINES, this.elementLineCount);
-		
-		this.bindVBO(this.vertexPolygonBuffer, this.aPositionLoc, 3);
-		this.bindVBO(this.colorIndexPolygonBuffer, this.aColorIndexLoc, 1);	
+
+		this.bindVBO(this.vertexPolygonBuffer, this.locationsSystem['aPosition'], 3);
+		this.bindVBO(this.colorIndexPolygonBuffer, this.locationsSystem['aColorIndex'], 1);
 		this.drawMode(this.elementPolygonBuffer, gl.TRIANGLES, this.elementPolygonCount);
 	}
 	
