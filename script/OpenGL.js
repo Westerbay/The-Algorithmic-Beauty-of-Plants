@@ -3,6 +3,8 @@ class OpenGL {
 	constructor(glcontext) {
 		this.gl = glcontext;
 		this.gl.getExtension('OES_element_index_uint');
+		this.ready = false;
+		this.textureSkyTop = [0, 0, 0, 0, 0, 0];
 
 		this.shader = new Shader();
 		this.systemProgram = this.gl.createProgram();
@@ -49,12 +51,21 @@ class OpenGL {
 
 	initSky() {
 		const gl = this.gl;
-		this.vertexSkyBuffer = gl.createBuffer();
+		this.vertexSkyBuffers = [];
+		for (let i = 0; i < 6; i++) {
+			this.vertexSkyBuffers[i] = gl.createBuffer();
+		}
+		this.normalSkyBuffer = gl.createBuffer();
+		this.tangentSkyBuffer = gl.createBuffer();
+		this.uvSkyBuffer = gl.createBuffer();
 		this.elementSkyBuffer = gl.createBuffer();
-		this.colorSkyBuffer = gl.createBuffer();
-		this.configBuffer(gl.ARRAY_BUFFER, this.vertexSkyBuffer, this.background.skyVertices);
+		for (let i = 0; i < 6; i++) {
+			this.configBuffer(gl.ARRAY_BUFFER, this.vertexSkyBuffers[i], this.background.skyVertices[i]);
+		}
+		this.configBuffer(gl.ARRAY_BUFFER, this.normalSkyBuffer, this.background.skyNormals);
+		this.configBuffer(gl.ARRAY_BUFFER, this.tangentSkyBuffer, this.background.skyTangents);
+		this.configBuffer(gl.ARRAY_BUFFER, this.uvSkyBuffer, this.background.skyUVs);
 		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementSkyBuffer, this.background.skyElements);
-		this.configBuffer(gl.ARRAY_BUFFER, this.colorSkyBuffer, this.background.skyColorIndices);
 		this.elementSkyCount = this.background.skyElements.length;
 	}
 
@@ -170,13 +181,33 @@ class OpenGL {
 	}
 
 	async initTextures() {
-		const image = await this.background.groundImage;
-		this.textureGround = this.createTexture(image);
-		this.enableAnisotropicFilter(this.textureGround);
-		this.gl.activeTexture(this.gl.TEXTURE0);
-		this.gl.bindTexture(this.gl.TEXTURE_2D, this.textureGround);
-	}
+		const gl = this.gl;		
+		gl.activeTexture(gl.TEXTURE0);
 
+		const groundDiffuse = await this.background.groundImage;
+		this.textureGround = this.createTexture(groundDiffuse);				
+		gl.bindTexture(gl.TEXTURE_2D, this.textureGround);
+		this.enableAnisotropicFilter(this.textureGround);	
+
+		const skyFront64 = await this.background.skyFrontImage;
+		const skyBack64 = await this.background.skyBackImage;		
+		const skyRight64 = await this.background.skyRightImage;
+		const skyLeft64 = await this.background.skyLeftImage;
+		const skyTop64 = await this.background.skyTopImage;
+		const skyBottom64 = await this.background.skyBottomImage;
+		this.textureSkyTop = [
+			this.createTexture(skyFront64),
+			this.createTexture(skyBack64),
+			this.createTexture(skyRight64),
+			this.createTexture(skyLeft64),
+			this.createTexture(skyTop64),
+			this.createTexture(skyBottom64)
+		];
+		for (let i = 0; i < 6; i++) {
+			gl.bindTexture(gl.TEXTURE_2D, this.textureSkyTop[i]);
+		}
+		this.ready = true;
+	}
 
 	render() {		
 		const gl = this.gl;		
@@ -205,6 +236,7 @@ class OpenGL {
 
 	groundRendering(gl, camera) {
 		gl.useProgram(this.backgroundProgram);
+		gl.bindTexture(gl.TEXTURE_2D, this.textureGround);
 		gl.uniformMatrix4fv(this.locationsBackground['model'], false, this.modelGround);
 		gl.uniformMatrix4fv(this.locationsBackground['cameraMatrix'], false, camera);
 		gl.uniform1i(this.locationsBackground['uDiffuseMap'], 0);
@@ -220,14 +252,26 @@ class OpenGL {
 	}
 
 	skyRendering(gl, camera) {
-		gl.useProgram(this.systemProgram);
-		gl.uniformMatrix4fv(this.locationsSystem['model'], false, mat4.create());
-		gl.uniformMatrix4fv(this.locationsSystem['cameraMatrix'], false, camera);
-		gl.uniform3fv(this.locationsSystem['colorStack'], this.background.skyColors);
-		gl.uniform1i(this.locationsSystem['colorStackLength'], this.background.skyColors.length);
-		this.bindVBO(this.vertexSkyBuffer, this.locationsSystem['aPosition'], 3);
-		this.bindVBO(this.colorSkyBuffer, this.locationsSystem['aColorIndex'], 1);
-		this.drawMode(this.elementSkyBuffer, gl.TRIANGLES, this.elementSkyCount);
+		gl.useProgram(this.backgroundProgram);
+		gl.uniformMatrix4fv(this.locationsBackground['model'], false, mat4.create());
+		gl.uniformMatrix4fv(this.locationsBackground['cameraMatrix'], false, camera);		
+		gl.uniform1i(this.locationsBackground['uDiffuseMap'], 0);
+		gl.uniform1i(this.locationsBackground['uNormalMap'], 1);
+		gl.uniform3fv(this.locationsBackground['uLightPos'], this.background.lightPosition);
+  		gl.uniform3fv(this.locationsBackground['uViewPos'], this.camera.computePosition());
+  		gl.uniform1i(this.locationsBackground['uEnableLighting'], false);
+		this.bindVBO(this.normalSkyBuffer, this.locationsBackground['aNormal'], 3);
+		this.bindVBO(this.tangentSkyBuffer, this.locationsBackground['aTangent'], 3);
+		this.bindVBO(this.uvSkyBuffer, this.locationsBackground['aUV'], 2);
+
+		if (!this.ready) {
+			return;
+		}
+		for (let i = 0; i < 6; i++) {
+			this.bindVBO(this.vertexSkyBuffers[i], this.locationsBackground['aPosition'], 3);
+			gl.bindTexture(gl.TEXTURE_2D, this.textureSkyTop[i]);
+			this.drawMode(this.elementSkyBuffer, gl.TRIANGLES, this.elementSkyCount);
+		}
 	}
 
 	meshRendering(gl, camera) {

@@ -46,8 +46,8 @@ class Camera {
 		var x = this.radius * Math.cos(this.pitch) * Math.sin(this.yaw);
 		var y = this.radius * Math.sin(this.pitch);
 		var z = this.radius * Math.cos(this.pitch) * Math.cos(this.yaw);
-		if (y < this.minHeight) {
-			y = this.minHeight;
+		if (y + this.center[1] - 0.1 < this.minHeight) {
+			y = this.minHeight - this.center[1] + 0.1;
 		}
 		return vec3.fromValues(x + this.center[0], y + this.center[1], z + this.center[2]);
 	}

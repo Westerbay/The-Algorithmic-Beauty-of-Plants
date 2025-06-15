@@ -7,7 +7,7 @@ class CanvasGL {
 		this.resetCameraButton = document.getElementById("resetCamera");
 		this.rotateButton = document.getElementById("rotate");
 		this.downloadButton = document.getElementById("download");
-		this.gl = this.canvas.getContext("webgl");
+		this.gl = this.canvas.getContext("webgl", { antialias: true });
 
 		if (!this.gl) {
 			alert("WebGL is not supported");
