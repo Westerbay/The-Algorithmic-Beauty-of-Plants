@@ -69,8 +69,8 @@ class Shader {
 
                 vec3 diffuse = albedo * diff;
                 vec3 specular = vec3(1.0) * spec * 0.5;
-
-                gl_FragColor = vec4(diffuse + specular, 1.0);
+                vec3 ambient = albedo * 0.2;
+                gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
             }
         `;
     }

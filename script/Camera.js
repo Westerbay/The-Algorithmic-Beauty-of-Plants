@@ -6,7 +6,7 @@ class Camera {
 		this.rotateSpeed = 0.02;
 		this.FOV = 60;
 		this.nearPlane = 0.1;
-		this.farPlane = 1000;
+		this.farPlane = 50;
 		this.radius = 0;
 		this.yaw = 0;
 		this.pitch = 0;

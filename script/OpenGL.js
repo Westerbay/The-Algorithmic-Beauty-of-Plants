@@ -205,6 +205,11 @@ class OpenGL {
 		for (let i = 0; i < 6; i++) {
 			gl.bindTexture(gl.TEXTURE_2D, this.textureSkyTop[i]);
 		}
+
+		gl.activeTexture(gl.TEXTURE1);
+		const groundNormal = await this.background.groundNormal;
+		this.textureGroundNormal = this.createTexture(groundNormal);				
+		gl.bindTexture(gl.TEXTURE_2D, this.textureGroundNormal);
 		this.textureReady = true;
 	}
 
@@ -237,14 +242,17 @@ class OpenGL {
 
 	groundRendering(gl, camera) {
 		gl.useProgram(this.backgroundProgram);
+		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, this.textureGround);
+		gl.activeTexture(gl.TEXTURE1);
+		gl.bindTexture(gl.TEXTURE_2D, this.textureGroundNormal);
 		gl.uniformMatrix4fv(this.locationsBackground['model'], false, this.modelGround);
 		gl.uniformMatrix4fv(this.locationsBackground['cameraMatrix'], false, camera);
 		gl.uniform1i(this.locationsBackground['uDiffuseMap'], 0);
 		gl.uniform1i(this.locationsBackground['uNormalMap'], 1);
 		gl.uniform3fv(this.locationsBackground['uLightPos'], this.background.lightPosition);
   		gl.uniform3fv(this.locationsBackground['uViewPos'], this.camera.computePosition());
-  		gl.uniform1i(this.locationsBackground['uEnableLighting'], false);
+  		gl.uniform1i(this.locationsBackground['uEnableLighting'], true);
 		this.bindVBO(this.vertexGroundBuffer, this.locationsBackground['aPosition'], 3);
 		this.bindVBO(this.normalGroundBuffer, this.locationsBackground['aNormal'], 3);
 		this.bindVBO(this.tangentGroundBuffer, this.locationsBackground['aTangent'], 3);
@@ -265,6 +273,7 @@ class OpenGL {
 		this.bindVBO(this.tangentSkyBuffer, this.locationsBackground['aTangent'], 3);
 		this.bindVBO(this.uvSkyBuffer, this.locationsBackground['aUV'], 2);
 
+		gl.activeTexture(gl.TEXTURE0);
 		for (let i = 0; i < 6; i++) {
 			this.bindVBO(this.vertexSkyBuffers[i], this.locationsBackground['aPosition'], 3);
 			gl.bindTexture(gl.TEXTURE_2D, this.textureSkyTop[i]);

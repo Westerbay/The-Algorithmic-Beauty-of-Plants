@@ -4,13 +4,14 @@ class Background {
         this.initSky();
         this.initGround();
 		this.groundImage = this.loadImageFromBase64(groundDiffuse64);
+		this.groundNormal = this.loadImageFromBase64(groundNormal64);
 		this.skyTopImage = this.loadImageFromBase64(skyTop64);
 		this.skyBottomImage = this.loadImageFromBase64(skyBottom64);
 		this.skyFrontImage = this.loadImageFromBase64(skyFront64);
 		this.skyBackImage = this.loadImageFromBase64(skyBack64);
 		this.skyLeftImage = this.loadImageFromBase64(skyLeft64);
 		this.skyRightImage = this.loadImageFromBase64(skyRight64);
-		this.lightPosition = new Float32Array([0, 100, 0]);
+		this.lightPosition = new Float32Array([0, 100000, 100000]);
     }
 
     initSky() {
@@ -31,10 +32,10 @@ class Background {
 
     initGround() {
         this.groundVertices = new Float32Array([
-			-1000.0, 0, 1000.0, // 0
-			1000.0, 0, 1000.0, // 1
-			1000.0, 0, -1000.0, // 2
-			-1000.0, 0, -1000.0, // 3
+			-50.0, 0, 50.0, // 0
+			50.0, 0, 50.0, // 1
+			50.0, 0, -50.0, // 2
+			-50.0, 0, -50.0, // 3
 		]);
 		this.groundNormals = new Float32Array([
 			0, 1, 0,
@@ -50,9 +51,9 @@ class Background {
 		]);
 		this.groundUVs = new Float32Array([
 			0, 0, // 0
-			200, 0, // 1
-			200, 200, // 2
-			0, 200  // 3
+			10, 0, // 1
+			10, 10, // 2
+			0, 10  // 3
 		]);
 		this.groundElements = new Uint32Array([
 			0, 1, 2, 0, 2, 3
