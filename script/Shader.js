@@ -33,7 +33,7 @@ class Shader {
 
     getFragmentShaderBackground() {
         return `
-            precision mediump float;
+            precision highp float;
 
             varying vec2 vUV;
             varying vec3 vFragPos;
@@ -101,7 +101,7 @@ class Shader {
 	
 	getFragmentShaderSystem() {
 		return `
-			precision mediump float;
+			precision highp float;
 
 			varying vec3 fragColor;	
             varying vec3 vFragPos;
