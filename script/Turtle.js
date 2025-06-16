@@ -4,16 +4,70 @@ class Turtle {
 		this.turtleState = turtleState;
 		this.angleRotation = this._degToRad(angleRotationDegree);
 		this.mesh = new Mesh();
-		this.mesh.addVertexLine(
-			vec3.clone(this.turtleState.position),
-			turtleState.colorIndex
-		);
+		this.addVertexLine();
 		
 		this.currentVertexElementLine = 0;
 		this.currentVertexElementPolygon = 0;
 		this.recordPolygon = false;
 		this.states = [];		
 		this.polygonElements = [];
+	}
+
+	addVertexLine() {
+		const normal = [
+			this.turtleState.orientation[6],
+			this.turtleState.orientation[7],
+			this.turtleState.orientation[8]
+		];
+		const tangent = [
+			this.turtleState.orientation[3],
+			this.turtleState.orientation[4],
+			this.turtleState.orientation[5]
+		];
+		this.mesh.addVertexLine(
+			vec3.clone(this.turtleState.position),
+			this.turtleState.colorIndex,
+			normal,
+			tangent
+		);
+	}
+
+	addVertexPolygon() {
+		const normal = [
+			this.turtleState.orientation[6],
+			this.turtleState.orientation[7],
+			this.turtleState.orientation[8]
+		];
+		const tangent = [
+			this.turtleState.orientation[3],
+			this.turtleState.orientation[4],
+			this.turtleState.orientation[5]
+		];
+		this.mesh.addVertexPolygon(
+			vec3.clone(this.turtleState.position),
+			this.turtleState.colorIndex,
+			normal,
+			tangent
+		);
+	}
+
+	addVertexPolygonSide() {
+		const normal = [
+			this.turtleState.orientation[6],
+			this.turtleState.orientation[7],
+			this.turtleState.orientation[8]
+		];
+		const tangent = [
+			this.turtleState.orientation[3],
+			this.turtleState.orientation[4],
+			this.turtleState.orientation[5]
+		];
+		this.mesh.addVertexPolygon(
+			vec3.clone(this.turtleState.position),
+			this.turtleState.colorIndex,
+			normal,
+			tangent
+		);
 	}
 	
 	moveForward() {
@@ -30,19 +84,12 @@ class Turtle {
 		vec3.add(this.turtleState.position, this.turtleState.position, delta);
 		
 		if (this.recordPolygon) {
-			this.mesh.addVertexPolygon(
-				vec3.clone(this.turtleState.position),
-				this.turtleState.colorIndex
-			);
-			
+			this.addVertexPolygon();
 			this.polygonElements.push(this.currentVertexElementPolygon);
 			this.currentVertexElementPolygon ++;
 		}
 		else {
-			this.mesh.addVertexLine(
-				vec3.clone(this.turtleState.position),
-				this.turtleState.colorIndex
-			);
+			this.addVertexLine();
 			this.currentVertexElementLine ++;
 		}		
 	}

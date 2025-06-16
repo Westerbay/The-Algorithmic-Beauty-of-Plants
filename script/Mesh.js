@@ -4,8 +4,12 @@ class Mesh {
 		this.verticesLine = [];
 		this.colorIndicesLine = [];
 		this.elementsLine = [];
+		this.normalsLine = [];
+		this.tangentsLine = [];
 		
 		this.verticesPolygon = [];
+		this.normalsPolygon = [];
+  		this.tangentsPolygon = [];
 		this.colorIndicesPolygon = [];
 		this.elementsPolygon = [];
 		
@@ -28,16 +32,20 @@ class Mesh {
 		this.maxZ = Math.max(this.maxZ, vertex[2]);
 	}
 	
-	addVertexLine(vertex, colorIndex) {		
+	addVertexLine(vertex, colorIndex, normal, tangent) {		
 		this.updateCenter(vertex);
 		this.verticesLine.push(...vertex);
 		this.colorIndicesLine.push(colorIndex);
+		this.normalsLine.push(...normal);
+		this.tangentsLine.push(...tangent);
 	}
 	
-	addVertexPolygon(vertex, colorIndex) {
+	addVertexPolygon(vertex, colorIndex, normal, tangent) {
 		this.updateCenter(vertex);
 		this.verticesPolygon.push(...vertex);
 		this.colorIndicesPolygon.push(colorIndex);
+		this.normalsPolygon.push(...normal);
+		this.tangentsPolygon.push(...tangent);
 	}
 	
 	addLine(start, end) {		
@@ -64,6 +72,14 @@ class Mesh {
 	getElementLineBuffer() {
 		return new Uint32Array(this.elementsLine);
 	}
+
+	getNormalLineBuffer() {
+		return new Float32Array(this.normalsLine);
+	}
+
+	getTangentLineBuffer() {
+		return new Float32Array(this.tangentsLine);
+	}
 	
 	getVertexPolygonBuffer() {
 		return new Float32Array(this.verticesPolygon);
@@ -75,6 +91,14 @@ class Mesh {
 	
 	getElementPolygonBuffer() {
 		return new Uint32Array(this.elementsPolygon);
+	}
+
+	getNormalPolygonBuffer() {
+		return new Float32Array(this.normalsPolygon);
+	}
+
+	getTangentPolygonBuffer() {
+		return new Float32Array(this.tangentsPolygon);
 	}
 	
 	centerX() {

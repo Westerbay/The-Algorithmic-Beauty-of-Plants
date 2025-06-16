@@ -129,21 +129,31 @@ class OpenGL {
 		const verticesPolygon = mesh.getVertexPolygonBuffer();
 		const colorIndicesPolygon = mesh.getColorIndexPolygonBuffer();
 		const elementsPolygon = mesh.getElementPolygonBuffer();
+		const normalsLine = mesh.getNormalLineBuffer();
+		const tangentsLine = mesh.getTangentLineBuffer();
+		const normalsPolygon = mesh.getNormalPolygonBuffer();
+		const tangentsPolygon = mesh.getTangentPolygonBuffer();
 		
-		this.vertexLineBuffer = gl.createBuffer();
-		this.configBuffer(gl.ARRAY_BUFFER, this.vertexLineBuffer, verticesLine);
+		this.vertexLineBuffer = gl.createBuffer();		
 		this.vertexPolygonBuffer = gl.createBuffer();
-		this.configBuffer(gl.ARRAY_BUFFER, this.vertexPolygonBuffer, verticesPolygon);
-		
-		this.colorIndexLineBuffer = gl.createBuffer();
-		this.configBuffer(gl.ARRAY_BUFFER, this.colorIndexLineBuffer, colorIndicesLine);
+		this.colorIndexLineBuffer = gl.createBuffer();		
 		this.colorIndexPolygonBuffer = gl.createBuffer();
-		this.configBuffer(gl.ARRAY_BUFFER, this.colorIndexPolygonBuffer, colorIndicesPolygon);
-		
 		this.elementLineBuffer = gl.createBuffer();
-		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementLineBuffer, elementsLine);
-		
 		this.elementPolygonBuffer = gl.createBuffer();
+		this.normalLineBuffer = gl.createBuffer();
+		this.normalPolygonBuffer = gl.createBuffer();
+		this.tangentLineBuffer = gl.createBuffer();
+		this.tangentPolygonBuffer = gl.createBuffer();
+
+		this.configBuffer(gl.ARRAY_BUFFER, this.colorIndexLineBuffer, colorIndicesLine);
+		this.configBuffer(gl.ARRAY_BUFFER, this.colorIndexPolygonBuffer, colorIndicesPolygon);
+		this.configBuffer(gl.ARRAY_BUFFER, this.vertexLineBuffer, verticesLine);
+		this.configBuffer(gl.ARRAY_BUFFER, this.vertexPolygonBuffer, verticesPolygon);
+		this.configBuffer(gl.ARRAY_BUFFER, this.normalLineBuffer, normalsLine);
+		this.configBuffer(gl.ARRAY_BUFFER, this.normalPolygonBuffer, normalsPolygon);
+		this.configBuffer(gl.ARRAY_BUFFER, this.tangentLineBuffer, tangentsLine);
+		this.configBuffer(gl.ARRAY_BUFFER, this.tangentPolygonBuffer, tangentsPolygon);
+		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementLineBuffer, elementsLine);	
 		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementPolygonBuffer, elementsPolygon);
 		
 		this.elementLineCount = elementsLine.length;
@@ -287,11 +297,16 @@ class OpenGL {
 		gl.uniformMatrix4fv(this.locationsSystem['cameraMatrix'], false, camera);
 		gl.uniform3fv(this.locationsSystem['colorStack'], this.colors);
 		gl.uniform1i(this.locationsSystem['colorStackLength'], this.colors.length);
+		gl.uniform3fv(this.locationsSystem['uLightPos'], this.background.lightPosition);
+  		gl.uniform3fv(this.locationsSystem['uViewPos'], this.camera.computePosition());
+  		gl.uniform1i(this.locationsSystem['uEnableLighting'], true);
 
+		this.bindVBO(this.normalLineBuffer, this.locationsSystem['aNormal'], 3);
 		this.bindVBO(this.vertexLineBuffer, this.locationsSystem['aPosition'], 3);
 		this.bindVBO(this.colorIndexLineBuffer, this.locationsSystem['aColorIndex'], 1);
 		this.drawMode(this.elementLineBuffer, gl.LINES, this.elementLineCount);
 
+		this.bindVBO(this.normalPolygonBuffer, this.locationsSystem['aNormal'], 3);
 		this.bindVBO(this.vertexPolygonBuffer, this.locationsSystem['aPosition'], 3);
 		this.bindVBO(this.colorIndexPolygonBuffer, this.locationsSystem['aColorIndex'], 1);
 		this.drawMode(this.elementPolygonBuffer, gl.TRIANGLES, this.elementPolygonCount);

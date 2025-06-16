@@ -41,10 +41,8 @@ class Shader {
 
             uniform sampler2D uDiffuseMap;
             uniform sampler2D uNormalMap;
-
             uniform vec3 uLightPos;
             uniform vec3 uViewPos;
-
             uniform bool uEnableLighting;
 
             void main() {
@@ -77,8 +75,9 @@ class Shader {
 
     getVertexShaderSystem() {
 		return `
-			attribute vec3 aPosition;
-			attribute float aColorIndex;
+			attribute vec3 aPosition;			
+            attribute vec3 aNormal;
+            attribute float aColorIndex;
 			
 			uniform mat4 model;
 			uniform mat4 cameraMatrix;
@@ -86,11 +85,16 @@ class Shader {
 			uniform int colorStackLength;
 			
 			varying vec3 fragColor;
+            varying vec3 vNormal;
+            varying vec3 vFragPos;
 			
 			void main() {
+                vec3 fragPos = (model * vec4(aPosition, 1.0)).xyz;
 				int i = int(aColorIndex);
 				fragColor = colorStack[i];
-				gl_Position = cameraMatrix * model * vec4(aPosition, 1.0);
+                vNormal = aNormal;
+                vFragPos = fragPos;
+				gl_Position = cameraMatrix * vec4(fragPos, 1.0);
 			}
 		`;
 	}
@@ -98,10 +102,46 @@ class Shader {
 	getFragmentShaderSystem() {
 		return `
 			precision mediump float;
-			varying vec3 fragColor;			
+
+			varying vec3 fragColor;	
+            varying vec3 vFragPos;
+            varying vec3 vNormal;	
+
+            uniform vec3 uLightPos;
+            uniform vec3 uViewPos;
+            uniform bool uEnableLighting;
+
+            vec3 computeColorLighting(vec3 albedo, vec3 normal) {
+                vec3 lightDir = normalize(uLightPos - vFragPos);
+                vec3 viewDir = normalize(uViewPos - vFragPos);
+                vec3 halfDir = normalize(lightDir + viewDir);
+
+                float diff = max(dot(normal, lightDir), 0.0);
+                float spec = pow(max(dot(normal, halfDir), 0.0), 32.0);
+
+                vec3 diffuse = albedo * diff;
+                vec3 specular = vec3(1.0) * spec * 0.5;
+                vec3 ambient = albedo * 0.3;
+
+                return ambient + diffuse + specular;
+            }
 			
 			void main() {
-				gl_FragColor = vec4(fragColor, 1.0);
+				vec3 albedo = fragColor;
+
+                if (!uEnableLighting) {
+                    gl_FragColor = vec4(albedo, 1.0);
+                    return;
+                }
+
+                vec3 color1 = computeColorLighting(albedo, normalize(vNormal));
+                vec3 color2 = computeColorLighting(albedo, normalize(-vNormal));
+                if (color1.x + color1.y + color1.z > color2.x + color2.y + color2.z) {
+                    gl_FragColor = vec4(color1, 1.0);
+                }
+                else {
+                    gl_FragColor = vec4(color2, 1.0);
+                }
 			}
 		`;
 	}
@@ -115,11 +155,11 @@ class Shader {
     }
 
     getAttributesSystem() {
-        return ['aPosition', 'aColorIndex'];
+        return ['aPosition', 'aColorIndex', 'aNormal', 'aTangent'];
     }
 
     getUniformsSystem() {
-        return ['model', 'cameraMatrix', 'colorStack', 'colorStackLength'];
+        return ['model', 'cameraMatrix', 'colorStack', 'colorStackLength', 'uLightPos', 'uViewPos', 'uEnableLighting'];
     }
 
 }
