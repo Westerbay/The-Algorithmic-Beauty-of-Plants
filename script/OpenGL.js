@@ -28,6 +28,9 @@ class OpenGL {
 		this.colors = [];	
 		this.camera = new Camera();			
 		this.background = new Background(glcontext);
+		this.lightingEnabled = true;
+		this.showSky = true;
+		this.showGround = true;
 		this.initTextures();
 		this.initSky();	
 		this.initGround();
@@ -226,7 +229,7 @@ class OpenGL {
 	render() {		
 		const gl = this.gl;		
 		gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-		gl.clearColor(1, 1, 1, 1);
+		gl.clearColor(0.95, 0.95, 0.95, 1);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		
 		const cameraMatrices = this.camera.computeMatrices(
@@ -251,6 +254,9 @@ class OpenGL {
 	}
 
 	groundRendering(gl, camera) {
+		if (!this.showGround) {
+			return;
+		}
 		gl.useProgram(this.backgroundProgram);
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, this.textureGround);
@@ -261,8 +267,8 @@ class OpenGL {
 		gl.uniform1i(this.locationsBackground['uDiffuseMap'], 0);
 		gl.uniform1i(this.locationsBackground['uNormalMap'], 1);
 		gl.uniform3fv(this.locationsBackground['uLightPos'], this.background.lightPosition);
-  		gl.uniform3fv(this.locationsBackground['uViewPos'], this.camera.computePosition());
-  		gl.uniform1i(this.locationsBackground['uEnableLighting'], true);
+  		gl.uniform3fv(this.locationsBackground['uViewPos'], this.camera.position);
+  		gl.uniform1i(this.locationsBackground['uEnableLighting'], this.lightingEnabled);
 		this.bindVBO(this.vertexGroundBuffer, this.locationsBackground['aPosition'], 3);
 		this.bindVBO(this.normalGroundBuffer, this.locationsBackground['aNormal'], 3);
 		this.bindVBO(this.tangentGroundBuffer, this.locationsBackground['aTangent'], 3);
@@ -271,13 +277,16 @@ class OpenGL {
 	}
 
 	skyRendering(gl, camera) {
+		if (!this.showSky) {
+			return;
+		}
 		gl.useProgram(this.backgroundProgram);
 		gl.uniformMatrix4fv(this.locationsBackground['model'], false, mat4.create());
 		gl.uniformMatrix4fv(this.locationsBackground['cameraMatrix'], false, camera);		
 		gl.uniform1i(this.locationsBackground['uDiffuseMap'], 0);
 		gl.uniform1i(this.locationsBackground['uNormalMap'], 1);
 		gl.uniform3fv(this.locationsBackground['uLightPos'], this.background.lightPosition);
-  		gl.uniform3fv(this.locationsBackground['uViewPos'], this.camera.computePosition());
+  		gl.uniform3fv(this.locationsBackground['uViewPos'], this.camera.position);
   		gl.uniform1i(this.locationsBackground['uEnableLighting'], false);
 		this.bindVBO(this.normalSkyBuffer, this.locationsBackground['aNormal'], 3);
 		this.bindVBO(this.tangentSkyBuffer, this.locationsBackground['aTangent'], 3);
@@ -298,8 +307,8 @@ class OpenGL {
 		gl.uniform3fv(this.locationsSystem['colorStack'], this.colors);
 		gl.uniform1i(this.locationsSystem['colorStackLength'], this.colors.length);
 		gl.uniform3fv(this.locationsSystem['uLightPos'], this.background.lightPosition);
-  		gl.uniform3fv(this.locationsSystem['uViewPos'], this.camera.computePosition());
-  		gl.uniform1i(this.locationsSystem['uEnableLighting'], true);
+  		gl.uniform3fv(this.locationsSystem['uViewPos'], this.camera.position);
+  		gl.uniform1i(this.locationsSystem['uEnableLighting'], this.lightingEnabled);
 
 		this.bindVBO(this.normalLineBuffer, this.locationsSystem['aNormal'], 3);
 		this.bindVBO(this.vertexLineBuffer, this.locationsSystem['aPosition'], 3);

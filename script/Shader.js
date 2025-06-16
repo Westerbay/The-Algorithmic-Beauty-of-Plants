@@ -44,9 +44,9 @@ class Shader {
             uniform vec3 uLightPos;
             uniform vec3 uViewPos;
             uniform bool uEnableLighting;
+            uniform bool isEmpty;
 
             void main() {
-
                 vec3 albedo = texture2D(uDiffuseMap, vUV).rgb;
 
                 if (!uEnableLighting) {

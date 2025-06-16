@@ -3,16 +3,17 @@ class Camera {
 	constructor() {
 		this.offsetDepth = 5;
 		this.maxZoomDistance = 0.1;
-		this.rotateSpeed = 0.02;
+		this.rotateSpeed = 0.015;
 		this.FOV = 60;
 		this.nearPlane = 0.1;
-		this.farPlane = 50;
+		this.farPlane = 1000;
 		this.radius = 0;
 		this.yaw = 0;
 		this.pitch = 0;
 		this.maxDepth = 0;
 		this.minHeight = 0;
 		this.center = vec3.fromValues(0, 0, 0);
+		this.position = vec3.fromValues(0, 0, 0);
 		this.rotate = false;
 	}
 
@@ -59,6 +60,7 @@ class Camera {
 				this.yaw -= 2 * Math.PI;
 			}
 		}
+		this.position = this.computePosition();
 	}
 
 	computeMatrices(width, height) {
@@ -68,7 +70,7 @@ class Camera {
 		mat4.perspective(projection, this.FOV * Math.PI / 180, aspect, this.nearPlane, this.farPlane);
 
 		const viewWorld = mat4.create();
-		mat4.lookAt(viewWorld, this.computePosition(), this.center, [0, 1, 0]);
+		mat4.lookAt(viewWorld, this.position, this.center, [0, 1, 0]);
 
 		const world = mat4.create();
 		mat4.multiply(world, projection, viewWorld);

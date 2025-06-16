@@ -5,6 +5,9 @@ class CanvasGL {
 		this.zoomButton = document.getElementById("zoom");
 		this.dezoomButton = document.getElementById("dezoom");
 		this.resetCameraButton = document.getElementById("resetCamera");
+		this.lightingButton = document.getElementById("lighting");
+		this.skyButton = document.getElementById("sky");
+		this.groundButton = document.getElementById("ground");
 		this.rotateButton = document.getElementById("rotate");
 		this.downloadButton = document.getElementById("download");
 		this.gl = this.canvas.getContext("webgl", { antialias: true });
@@ -25,38 +28,37 @@ class CanvasGL {
 
 	initOptionsButtons() {
 		this.camera.rotate = this.rotateButton.checked;
+		this.openGL.lightingEnabled = this.lightingButton.checked;
+		this.openGL.showSky = this.skyButton.checked;
+  		this.openGL.showGround = this.groundButton.checked;
 
 		this.downloadButton.addEventListener("click", () => {
 			alert("This feature is not implemented yet.");
 		});
-
 		this.dezoomButton.addEventListener("click", () => {
-			if (this.dragging) {
-				return;
-			}
 			this.camera.increaseRadius();
 		});
-
 		this.zoomButton.addEventListener("click", () => {
-			if (this.dragging) {
-				return;
-			}
 			this.camera.decreaseRadius();
 		});
-
 		this.resetCameraButton.addEventListener("click", () => {
-			if (this.dragging) {
-				return;
-			}
 			this.camera.reset();
 		});
-
 		this.rotateButton.addEventListener("click", () => {
-			if (this.dragging) {
-				return;
-			}
 			this.camera.rotate = !this.camera.rotate;
 			this.rotateButton.classList.toggle("active");
+		});
+		this.lightingButton.addEventListener("click", () => {
+			this.openGL.lightingEnabled = !this.openGL.lightingEnabled;
+			this.lightingButton.classList.toggle("active");
+		});
+		this.skyButton.addEventListener("click", () => {
+			this.openGL.showSky = !this.openGL.showSky;
+			this.skyButton.classList.toggle("active");
+		});
+		this.groundButton.addEventListener("click", () => {
+			this.openGL.showGround = !this.openGL.showGround;
+			this.groundButton.classList.toggle("active");
 		});
 	}
 	
