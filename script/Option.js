@@ -10,10 +10,12 @@ class Option {
 		this.colorStack = document.getElementById("colorStack");
 		this.generationInput = document.getElementById("generation");
 		this.lengthInput = document.getElementById("length");
+		this.scaleDiameterPercentInput = document.getElementById("diameter");
 		this.angleInput = document.getElementById("angle");
 		this.axiomInput = document.getElementById("axiom");
 
 		this.lastLength = 0;
+		this.lastScaleDiameter = 0;
 		this.lastAngleRotation = 0;
 		this.lastAxiom = "";
 		this.lastRules = new Rules();
@@ -24,15 +26,19 @@ class Option {
 	addEventListeners() {
 		this.generationInput.addEventListener("change", () => {
 			this.lastGeneration = parseInt(this.generationInput.value, 10);
-			this.draw(this.lastGeneration, this.lastLength, this.lastAngleRotation, this.lastAxiom, this.lastRules);
+			this.draw(this.lastGeneration, this.lastLength, this.lastScaleDiameter, this.lastAngleRotation, this.lastAxiom, this.lastRules);
 		});
 		this.lengthInput.addEventListener("change", () => {
 			this.lastLength = parseFloat(this.lengthInput.value);
-			this.draw(this.lastGeneration, this.lastLength, this.lastAngleRotation, this.lastAxiom, this.lastRules);
+			this.draw(this.lastGeneration, this.lastLength, this.lastScaleDiameter, this.lastAngleRotation, this.lastAxiom, this.lastRules);
 		});
 		this.angleInput.addEventListener("change", () => {
 			this.lastAngleRotation = parseFloat(this.angleInput.value);
-			this.draw(this.lastGeneration, this.lastLength, this.lastAngleRotation, this.lastAxiom, this.lastRules);
+			this.draw(this.lastGeneration, this.lastLength, this.lastScaleDiameter, this.lastAngleRotation, this.lastAxiom, this.lastRules);
+		});
+		this.scaleDiameterPercentInput.addEventListener("change", () => {
+			this.lastScaleDiameter = parseFloat(this.scaleDiameterPercentInput.value);
+			this.draw(this.lastGeneration, this.lastLength, this.lastScaleDiameter, this.lastAngleRotation, this.lastAxiom, this.lastRules);
 		});
 	}
 	
@@ -118,15 +124,16 @@ class Option {
 		this.openGL.colors = new Float32Array(colorsGL.flat());	
 	}
 	
-	draw(generation, length, angleRotation, axiom, rules) {
+	draw(generation, length, scaleDiameter, angleRotation, axiom, rules) {
 		this.lastGeneration = generation;
 		this.lastLength = length;
 		this.lastAngleRotation = angleRotation;
 		this.lastAxiom = axiom;
 		this.lastRules = rules;
+		this.lastScaleDiameter = scaleDiameter;
 		
 		const lSystem = new LSystem(axiom, rules);
-		const turtleState = new TurtleState(length * 0.01, vec3.fromValues(0, 0, 0), 0);
+		const turtleState = new TurtleState(length * 0.01, vec3.fromValues(0, 0, 0), 0, scaleDiameter * 0.01);
 		
 		const turtle = new Turtle(turtleState, angleRotation);
 		const interpreter = new Interpreter(turtle);
@@ -141,6 +148,7 @@ class Option {
 		const length = parseFloat(this.lengthInput.value);
 		const angleRotation = parseFloat(this.angleInput.value);
 		const axiom = this.axiomInput.value;
+		const scaleDiameter = parseFloat(this.scaleDiameterPercentInput.value);
 		
 		const rules = new Rules();
 		document.querySelectorAll("#rulesContainer .rule-row").forEach(row => {
@@ -154,7 +162,7 @@ class Option {
 			}
 		});
 		
-		this.draw(generation, length, angleRotation, axiom, rules);
+		this.draw(generation, length, scaleDiameter, angleRotation, axiom, rules);
 	}
 	
 	loadPreset(preset) {	
@@ -165,7 +173,8 @@ class Option {
 		this.lengthInput.value = preset.length;
 		this.angleInput.value = preset.angle;
 		this.axiomInput.value = preset.axiom;
-		
+		this.scaleDiameterPercentInput.value = preset.scaleDiameterPercent;
+
 		for (var [key, value] of Object.entries(preset.rules.simpleRules)) {
 			this.addSimpleRule(key, value);
 		}

@@ -63,7 +63,7 @@ class Turtle {
 		this.mesh.addRod(
 			this.turtleState.lastVertexElementLine, 
 			this.currentVertexElementLine,
-			this.turtleState.length * this.turtleState.scaleDiamater * 0.2,
+			this.turtleState.length * this.turtleState.scaleDiamater,
 		);
 		this.turtleState.lastVertexElementLine = this.currentVertexElementLine;
 	}
@@ -178,7 +178,7 @@ class Turtle {
 	}
 	
 	decrementDiameter() {
-		this.turtleState.scaleDiamater *= 0.5;
+		this.turtleState.scaleDiamater *= 0.67;
 	}
 	
 	incrementColor() {

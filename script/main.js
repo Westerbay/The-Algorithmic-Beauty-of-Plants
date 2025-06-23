@@ -4,23 +4,20 @@ function initPresets() {
 	var rules = new Rules();
 	rules.addSimpleRule('F', "FF-F-F-F-FF");
 	var colors = ["#000000"];
-	presets.push(new Preset(4, 2, 90, "F-F-F-F", rules, colors));
-	
-	rules = new Rules();
-	rules.addSimpleRule('r', "-Fl-r");
-	rules.addSimpleRule('l', "l+rF+");
-	presets.push(new Preset(16, 1, 90, "Fl", rules, colors));
+	presets.push(new Preset(4, 2, 25, 90, "F-F-F-F", rules, colors));
 	
 	rules = new Rules();
 	rules.addSimpleRule('F', "FF-[-F+F+F]+[+F-F-F]");
-	presets.push(new Preset(4, 6, 22.5, "F", rules, colors));
+	colors = ["#12BC86"];
+	presets.push(new Preset(4, 6, 20, 22.5, "F", rules, colors));
 	
 	rules = new Rules();
 	rules.addSimpleRule('A', "B-F+CFC+F-D&F^D-F+&&CFC+F+B//");
 	rules.addSimpleRule('B', "A&F^CFB^F^D^^-F-D^|F^B|FC^F^A//");
 	rules.addSimpleRule('C', "|D^|F^B-F+C^F^A&&FA&F^C+F+B^F^D//");
 	rules.addSimpleRule('D', "|CFB-F+B|FA&F^A&&FB-F+B|FC//");
-	presets.push(new Preset(4, 10, 90, "A", rules, colors));
+	colors = ["#BB2233"];
+	presets.push(new Preset(4, 10, 20, 90, "A", rules, colors));
 	
 	rules = new Rules();
 	rules.addSimpleRule('P', "I+[P+r]--//[--l]I[++l]-[Pr]++Pr");
@@ -31,7 +28,15 @@ function initPresets() {
 	rules.addSimpleRule('I', "Fs[//&&l][//^^l]Fs");
 	rules.addSimpleRule('l', "['{+f-ff-f+|+f-ff-f}]");
 	colors = ["#886622", "#227722", "#DD0000"];
-	presets.push(new Preset(5, 7, 22.5, "P", rules, colors));
+	presets.push(new Preset(5, 7, 20, 22.5, "P", rules, colors));
+
+	rules = new Rules();
+	rules.addSimpleRule('A', "[&FL!A]/////[&FL!A]///////[&FL!A]");
+	rules.addSimpleRule('F', "S/////F");
+	rules.addSimpleRule('S', "FL");
+	rules.addSimpleRule('L', "['∧∧{-f+f+f-|-f+f+f}]");
+	colors = ["#886622", "#227722"];
+	presets.push(new Preset(7, 7, 35, 22.5, "A", rules, colors));
 }
 
 function loadPreset(option, value) {

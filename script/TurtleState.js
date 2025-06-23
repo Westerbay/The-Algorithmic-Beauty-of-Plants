@@ -1,6 +1,6 @@
 class TurtleState {
 
-	constructor(length, position, colorIndex, scaleDiamater = 1.0) {		
+	constructor(length, position, colorIndex, scaleDiamater) {		
 		this.length = length;
 		this.position = vec3.clone(position);
 		this.orientation = mat3.fromValues(
