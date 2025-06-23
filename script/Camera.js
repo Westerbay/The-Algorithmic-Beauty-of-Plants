@@ -3,7 +3,7 @@ class Camera {
 	constructor() {
 		this.offsetDepth = 5;
 		this.maxZoomDistance = 0.1;
-		this.rotateSpeed = 0.015;
+		this.rotateSpeed = 0.01;
 		this.FOV = 60;
 		this.nearPlane = 0.1;
 		this.farPlane = 1000;
