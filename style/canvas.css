@@ -41,6 +41,21 @@
 	right: 10px;
 }
 
+#overlay .top-left {
+	top: 10px;
+	left: 10px;
+}
+
+#overlay .top-left select {
+	border-radius: 8px;
+    font-size: 1.2em;     
+	border: 1px solid black;
+	padding: 0.5em;    
+    background-color: #333333;   
+    color: white;              
+
+}
+
 #overlay .icon-btn {
 	cursor: pointer;
 	width: 30px;

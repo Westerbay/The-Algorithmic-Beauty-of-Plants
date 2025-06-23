@@ -10,6 +10,7 @@ class CanvasGL {
 		this.groundButton = document.getElementById("ground");
 		this.rotateButton = document.getElementById("rotate");
 		this.downloadButton = document.getElementById("download");
+		this.primitiveSelect = document.getElementById("primitive");
 		this.gl = this.canvas.getContext("webgl", { antialias: true });
 
 		if (!this.gl) {
@@ -32,8 +33,15 @@ class CanvasGL {
 		this.openGL.showSky = this.skyButton.checked;
   		this.openGL.showGround = this.groundButton.checked;
 
+		const primitiveValue = parseInt(this.primitiveSelect.value);
+		this.openGL.linePrimitive = primitiveValue == 0;
+
 		this.downloadButton.addEventListener("click", () => {
 			alert("This feature is not implemented yet.");
+		});
+		this.primitiveSelect.addEventListener('change', (e) => {
+			const value = parseInt(e.target.value);
+			this.openGL.linePrimitive = value == 0;
 		});
 		this.dezoomButton.addEventListener("click", () => {
 			this.camera.increaseRadius();
