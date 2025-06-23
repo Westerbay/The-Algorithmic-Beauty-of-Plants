@@ -31,6 +31,7 @@ class OpenGL {
 		this.lightingEnabled = true;
 		this.showSky = true;
 		this.showGround = true;
+		this.linePrimitive = false;
 		this.initTextures();
 		this.initSky();	
 		this.initGround();
@@ -129,38 +130,62 @@ class OpenGL {
 		const verticesLine = mesh.getVertexLineBuffer();
 		const colorIndicesLine = mesh.getColorIndexLineBuffer();
 		const elementsLine = mesh.getElementLineBuffer();
-		const verticesPolygon = mesh.getVertexPolygonBuffer();
-		const colorIndicesPolygon = mesh.getColorIndexPolygonBuffer();
-		const elementsPolygon = mesh.getElementPolygonBuffer();
 		const normalsLine = mesh.getNormalLineBuffer();
 		const tangentsLine = mesh.getTangentLineBuffer();
-		const normalsPolygon = mesh.getNormalPolygonBuffer();
-		const tangentsPolygon = mesh.getTangentPolygonBuffer();
+
+		const verticesRod = mesh.getVertexRodBuffer();
+		const colorIndicesRod = mesh.getColorIndexRodBuffer();
+		const elementsRod = mesh.getElementRodBuffer();
+		const normalsRod = mesh.getNormalRodBuffer();
+		const tangentsRod = mesh.getTangentRodBuffer();
+
+		const verticesLeaf = mesh.getVertexLeafBuffer();
+		const colorIndicesLeaf = mesh.getColorIndexLeafBuffer();
+		const elementsLeaf = mesh.getElementLeafBuffer();
+		const normalsLeaf = mesh.getNormalLeafBuffer();
+		const tangentsLeaf = mesh.getTangentLeafBuffer();
 		
-		this.vertexLineBuffer = gl.createBuffer();		
-		this.vertexPolygonBuffer = gl.createBuffer();
-		this.colorIndexLineBuffer = gl.createBuffer();		
-		this.colorIndexPolygonBuffer = gl.createBuffer();
+		this.vertexLineBuffer = gl.createBuffer();
+		this.colorIndexLineBuffer = gl.createBuffer();	
 		this.elementLineBuffer = gl.createBuffer();
-		this.elementPolygonBuffer = gl.createBuffer();
-		this.normalLineBuffer = gl.createBuffer();
-		this.normalPolygonBuffer = gl.createBuffer();
+		this.normalLineBuffer = gl.createBuffer();	
 		this.tangentLineBuffer = gl.createBuffer();
-		this.tangentPolygonBuffer = gl.createBuffer();
+
+		this.vertexRodBuffer = gl.createBuffer();			
+		this.colorIndexRodBuffer = gl.createBuffer();		
+		this.elementRodBuffer = gl.createBuffer();		
+		this.normalRodBuffer = gl.createBuffer();		
+		this.tangentRodBuffer = gl.createBuffer();
+
+		this.vertexLeafBuffer = gl.createBuffer();			
+		this.colorIndexLeafBuffer = gl.createBuffer();		
+		this.elementLeafBuffer = gl.createBuffer();		
+		this.normalLeafBuffer = gl.createBuffer();		
+		this.tangentLeafBuffer = gl.createBuffer();
 
 		this.configBuffer(gl.ARRAY_BUFFER, this.colorIndexLineBuffer, colorIndicesLine);
-		this.configBuffer(gl.ARRAY_BUFFER, this.colorIndexPolygonBuffer, colorIndicesPolygon);
+		this.configBuffer(gl.ARRAY_BUFFER, this.colorIndexRodBuffer, colorIndicesRod);
+		this.configBuffer(gl.ARRAY_BUFFER, this.colorIndexLeafBuffer, colorIndicesLeaf);
+
 		this.configBuffer(gl.ARRAY_BUFFER, this.vertexLineBuffer, verticesLine);
-		this.configBuffer(gl.ARRAY_BUFFER, this.vertexPolygonBuffer, verticesPolygon);
+		this.configBuffer(gl.ARRAY_BUFFER, this.vertexRodBuffer, verticesRod);
+		this.configBuffer(gl.ARRAY_BUFFER, this.vertexLeafBuffer, verticesLeaf);
+
 		this.configBuffer(gl.ARRAY_BUFFER, this.normalLineBuffer, normalsLine);
-		this.configBuffer(gl.ARRAY_BUFFER, this.normalPolygonBuffer, normalsPolygon);
+		this.configBuffer(gl.ARRAY_BUFFER, this.normalRodBuffer, normalsRod);
+		this.configBuffer(gl.ARRAY_BUFFER, this.normalLeafBuffer, normalsLeaf);
+
 		this.configBuffer(gl.ARRAY_BUFFER, this.tangentLineBuffer, tangentsLine);
-		this.configBuffer(gl.ARRAY_BUFFER, this.tangentPolygonBuffer, tangentsPolygon);
+		this.configBuffer(gl.ARRAY_BUFFER, this.tangentRodBuffer, tangentsRod);
+		this.configBuffer(gl.ARRAY_BUFFER, this.tangentLeafBuffer, tangentsLeaf);
+
 		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementLineBuffer, elementsLine);	
-		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementPolygonBuffer, elementsPolygon);
+		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementRodBuffer, elementsRod);
+		this.configBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementLeafBuffer, elementsLeaf);
 		
 		this.elementLineCount = elementsLine.length;
-		this.elementPolygonCount = elementsPolygon.length;
+		this.elementRodCount = elementsRod.length;
+		this.elementLeafCount = elementsLeaf.length;
 	}
 	
 	configBuffer(type, buffer, data) {
@@ -310,15 +335,23 @@ class OpenGL {
   		gl.uniform3fv(this.locationsSystem['uViewPos'], this.camera.position);
   		gl.uniform1i(this.locationsSystem['uEnableLighting'], this.lightingEnabled);
 
-		this.bindVBO(this.normalLineBuffer, this.locationsSystem['aNormal'], 3);
-		this.bindVBO(this.vertexLineBuffer, this.locationsSystem['aPosition'], 3);
-		this.bindVBO(this.colorIndexLineBuffer, this.locationsSystem['aColorIndex'], 1);
-		this.drawMode(this.elementLineBuffer, gl.LINES, this.elementLineCount);
+		if (this.linePrimitive) {
+			this.bindVBO(this.normalLineBuffer, this.locationsSystem['aNormal'], 3);
+			this.bindVBO(this.vertexLineBuffer, this.locationsSystem['aPosition'], 3);
+			this.bindVBO(this.colorIndexLineBuffer, this.locationsSystem['aColorIndex'], 1);
+			this.drawMode(this.elementLineBuffer, gl.LINES, this.elementLineCount);
+		}
+		else {
+			this.bindVBO(this.normalRodBuffer, this.locationsSystem['aNormal'], 3);
+			this.bindVBO(this.vertexRodBuffer, this.locationsSystem['aPosition'], 3);
+			this.bindVBO(this.colorIndexRodBuffer, this.locationsSystem['aColorIndex'], 1);
+			this.drawMode(this.elementRodBuffer, gl.TRIANGLES, this.elementRodCount);
+		}
 
-		this.bindVBO(this.normalPolygonBuffer, this.locationsSystem['aNormal'], 3);
-		this.bindVBO(this.vertexPolygonBuffer, this.locationsSystem['aPosition'], 3);
-		this.bindVBO(this.colorIndexPolygonBuffer, this.locationsSystem['aColorIndex'], 1);
-		this.drawMode(this.elementPolygonBuffer, gl.TRIANGLES, this.elementPolygonCount);
+		this.bindVBO(this.normalLeafBuffer, this.locationsSystem['aNormal'], 3);
+		this.bindVBO(this.vertexLeafBuffer, this.locationsSystem['aPosition'], 3);
+		this.bindVBO(this.colorIndexLeafBuffer, this.locationsSystem['aColorIndex'], 1);
+		this.drawMode(this.elementLeafBuffer, gl.TRIANGLES, this.elementLeafCount);
 	}
 	
 	bindVBO(buffer, location, numberElement) {

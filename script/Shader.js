@@ -134,14 +134,8 @@ class Shader {
                     return;
                 }
 
-                vec3 color1 = computeColorLighting(albedo, normalize(vNormal));
-                vec3 color2 = computeColorLighting(albedo, normalize(-vNormal));
-                if (color1.x + color1.y + color1.z > color2.x + color2.y + color2.z) {
-                    gl_FragColor = vec4(color1, 1.0);
-                }
-                else {
-                    gl_FragColor = vec4(color2, 1.0);
-                }
+                vec3 color = computeColorLighting(albedo, normalize(vNormal));
+                gl_FragColor = vec4(color, 1.0);
 			}
 		`;
 	}

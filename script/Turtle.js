@@ -13,7 +13,7 @@ class Turtle {
 		this.polygonElements = [];
 	}
 
-	addVertexLine() {
+	getNormalAndTangent() {
 		const normal = [
 			this.turtleState.orientation[6],
 			this.turtleState.orientation[7],
@@ -24,6 +24,21 @@ class Turtle {
 			this.turtleState.orientation[4],
 			this.turtleState.orientation[5]
 		];
+		return { normal, tangent };
+	}
+
+	addVertexPolygon() {
+		const { normal, tangent } = this.getNormalAndTangent();
+		this.mesh.addVertexPolygon(
+			vec3.clone(this.turtleState.position),
+			this.turtleState.colorIndex,
+			normal,
+			tangent
+		);
+	}
+
+	addVertexLine() {
+		const { normal, tangent } = this.getNormalAndTangent();
 		this.mesh.addVertexLine(
 			vec3.clone(this.turtleState.position),
 			this.turtleState.colorIndex,
@@ -32,37 +47,9 @@ class Turtle {
 		);
 	}
 
-	addVertexPolygon() {
-		const normal = [
-			this.turtleState.orientation[6],
-			this.turtleState.orientation[7],
-			this.turtleState.orientation[8]
-		];
-		const tangent = [
-			this.turtleState.orientation[3],
-			this.turtleState.orientation[4],
-			this.turtleState.orientation[5]
-		];
-		this.mesh.addVertexPolygon(
-			vec3.clone(this.turtleState.position),
-			this.turtleState.colorIndex,
-			normal,
-			tangent
-		);
-	}
-
-	addVertexPolygonSide() {
-		const normal = [
-			this.turtleState.orientation[6],
-			this.turtleState.orientation[7],
-			this.turtleState.orientation[8]
-		];
-		const tangent = [
-			this.turtleState.orientation[3],
-			this.turtleState.orientation[4],
-			this.turtleState.orientation[5]
-		];
-		this.mesh.addVertexPolygon(
+	addVertexRod() {
+		const { normal, tangent } = this.getNormalAndTangent();
+		this.mesh.addVertexRod(
 			vec3.clone(this.turtleState.position),
 			this.turtleState.colorIndex,
 			normal,
@@ -73,6 +60,11 @@ class Turtle {
 	moveForward() {
 		this.moveForwardWithoutDrawing();
 		this.mesh.addLine(this.turtleState.lastVertexElementLine, this.currentVertexElementLine);
+		this.mesh.addRod(
+			this.turtleState.lastVertexElementLine, 
+			this.currentVertexElementLine,
+			this.turtleState.length * this.turtleState.scaleDiamater * 0.2,
+		);
 		this.turtleState.lastVertexElementLine = this.currentVertexElementLine;
 	}
 	
@@ -186,7 +178,7 @@ class Turtle {
 	}
 	
 	decrementDiameter() {
-		this.turtleState.length *= 0.5;
+		this.turtleState.scaleDiamater *= 0.5;
 	}
 	
 	incrementColor() {

@@ -1,7 +1,7 @@
 class Camera {
 
 	constructor() {
-		this.offsetDepth = 5;
+		this.offsetDepth = 4;
 		this.maxZoomDistance = 0.1;
 		this.rotateSpeed = 0.01;
 		this.FOV = 60;
