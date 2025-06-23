@@ -39,6 +39,9 @@
 #overlay .top-right {
 	top: 10px;
 	right: 10px;
+	background: rgba(255, 255, 255, 0.5);
+	padding: 8px;
+	border-radius: 8px;
 }
 
 #overlay .top-left {
@@ -50,10 +53,9 @@
 	border-radius: 8px;
     font-size: 1.2em;     
 	border: 1px solid black;
-	padding: 0.5em;    
-    background-color: #333333;   
-    color: white;              
-
+	padding: 0.5em;
+    background-color: #333333;
+    color: white;
 }
 
 #overlay .icon-btn {
