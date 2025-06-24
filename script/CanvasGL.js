@@ -6,6 +6,7 @@ class CanvasGL {
 		this.dezoomButton = document.getElementById("dezoom");
 		this.resetCameraButton = document.getElementById("resetCamera");
 		this.lightingButton = document.getElementById("lighting");
+		this.shadowButton = document.getElementById("shadow");
 		this.skyButton = document.getElementById("sky");
 		this.groundButton = document.getElementById("ground");
 		this.rotateButton = document.getElementById("rotate");
@@ -30,6 +31,7 @@ class CanvasGL {
 	initOptionsButtons() {
 		this.camera.rotate = this.rotateButton.checked;
 		this.openGL.lightingEnabled = this.lightingButton.checked;
+		this.openGL.shadowEnabled = this.shadowButton.checked;
 		this.openGL.showSky = this.skyButton.checked;
   		this.openGL.showGround = this.groundButton.checked;
 
@@ -59,6 +61,10 @@ class CanvasGL {
 		this.lightingButton.addEventListener("click", () => {
 			this.openGL.lightingEnabled = !this.openGL.lightingEnabled;
 			this.lightingButton.classList.toggle("active");
+		});
+		this.shadowButton.addEventListener("click", () => {
+			this.openGL.shadowEnabled = !this.openGL.shadowEnabled;
+			this.shadowButton.classList.toggle("active");
 		});
 		this.skyButton.addEventListener("click", () => {
 			this.openGL.showSky = !this.openGL.showSky;

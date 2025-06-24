@@ -1,14 +1,9 @@
 const presets = [];
 
-function initPresets() {
-	var rules = new Rules();
-	rules.addSimpleRule('F', "FF-F-F-F-FF");
-	var colors = ["#000000"];
-	presets.push(new Preset(4, 2, 25, 90, "F-F-F-F", rules, colors));
-	
+function initPresets() {	
 	rules = new Rules();
 	rules.addSimpleRule('F', "FF-[-F+F+F]+[+F-F-F]");
-	colors = ["#12BC86"];
+	var colors = ["#12BC86"];
 	presets.push(new Preset(4, 6, 20, 22.5, "F", rules, colors));
 	
 	rules = new Rules();

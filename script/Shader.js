@@ -23,6 +23,7 @@ class Shader {
                 vec3 bitangent = normalize(cross(normal, tangent));
 
                 vTBN = mat3(tangent, bitangent, normal);
+                fragPos.y -= 0.001; //Does not overlapp shadow
                 vFragPos = fragPos;
                 vUV = aUV;
                 gl_Position = cameraMatrix * vec4(fragPos, 1.0);
@@ -108,8 +109,10 @@ class Shader {
             varying vec3 vNormal;	
 
             uniform vec3 uLightPos;
+            uniform vec4 shadowColor;
             uniform vec3 uViewPos;
             uniform bool uEnableLighting;
+            uniform bool isShadow;
 
             vec3 computeColorLighting(vec3 albedo, vec3 normal) {
                 vec3 lightDir = normalize(uLightPos - vFragPos);
@@ -127,6 +130,11 @@ class Shader {
             }
 			
 			void main() {
+                if (isShadow) {
+                    gl_FragColor = shadowColor;
+                    return;
+                }
+
 				vec3 albedo = fragColor;
 
                 if (!uEnableLighting) {
@@ -153,7 +161,7 @@ class Shader {
     }
 
     getUniformsSystem() {
-        return ['model', 'cameraMatrix', 'colorStack', 'colorStackLength', 'uLightPos', 'uViewPos', 'uEnableLighting'];
+        return ['isShadow', 'shadowColor', 'model', 'cameraMatrix', 'colorStack', 'colorStackLength', 'uLightPos', 'uViewPos', 'uEnableLighting'];
     }
 
 }

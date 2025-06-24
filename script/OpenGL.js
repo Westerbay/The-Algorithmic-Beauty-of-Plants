@@ -3,6 +3,8 @@ class OpenGL {
 	constructor(glcontext) {
 		this.gl = glcontext;
 		this.gl.getExtension('OES_element_index_uint');
+		this.gl.enable(this.gl.BLEND);
+		this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 		this.textureReady = false;
 
 		this.shader = new Shader();
@@ -29,9 +31,11 @@ class OpenGL {
 		this.camera = new Camera();			
 		this.background = new Background(glcontext);
 		this.lightingEnabled = true;
+		this.shadowEnabled = true;
 		this.showSky = true;
 		this.showGround = true;
 		this.linePrimitive = false;
+		this.shadowColor = [0, 0, 0, 0.9];
 		this.initTextures();
 		this.initSky();	
 		this.initGround();
@@ -326,32 +330,81 @@ class OpenGL {
 	}
 
 	meshRendering(gl, camera) {
+		const shadowColor = new Float32Array(this.shadowColor.flat());
+		const shadowMat = this.getShadowMatrix();
+		let shadowModel = mat4.create();
+		mat4.multiply(shadowModel, shadowMat, this.modelGround);
+
 		gl.useProgram(this.systemProgram);
-		gl.uniformMatrix4fv(this.locationsSystem['model'], false, mat4.create());
 		gl.uniformMatrix4fv(this.locationsSystem['cameraMatrix'], false, camera);
 		gl.uniform3fv(this.locationsSystem['colorStack'], this.colors);
 		gl.uniform1i(this.locationsSystem['colorStackLength'], this.colors.length);
 		gl.uniform3fv(this.locationsSystem['uLightPos'], this.background.lightPosition);
   		gl.uniform3fv(this.locationsSystem['uViewPos'], this.camera.position);
+		gl.uniform4fv(this.locationsSystem['shadowColor'], shadowColor);
   		gl.uniform1i(this.locationsSystem['uEnableLighting'], this.lightingEnabled);
 
 		if (this.linePrimitive) {
+			gl.uniform1i(this.locationsSystem['isShadow'], false);
+			gl.uniformMatrix4fv(this.locationsSystem['model'], false, mat4.create());
 			this.bindVBO(this.normalLineBuffer, this.locationsSystem['aNormal'], 3);
 			this.bindVBO(this.vertexLineBuffer, this.locationsSystem['aPosition'], 3);
 			this.bindVBO(this.colorIndexLineBuffer, this.locationsSystem['aColorIndex'], 1);
 			this.drawMode(this.elementLineBuffer, gl.LINES, this.elementLineCount);
+
+			if (this.shadowEnabled) {
+				gl.uniform1i(this.locationsSystem['isShadow'], true);
+				gl.uniformMatrix4fv(this.locationsSystem['model'], false, shadowModel);
+				this.bindVBO(this.normalLineBuffer, this.locationsSystem['aNormal'], 3);
+				this.bindVBO(this.vertexLineBuffer, this.locationsSystem['aPosition'], 3);
+				this.bindVBO(this.colorIndexLineBuffer, this.locationsSystem['aColorIndex'], 1);
+				this.drawMode(this.elementLineBuffer, gl.LINES, this.elementLineCount);
+			}			
 		}
 		else {
+			gl.uniform1i(this.locationsSystem['isShadow'], false);
+			gl.uniformMatrix4fv(this.locationsSystem['model'], false, mat4.create());
 			this.bindVBO(this.normalRodBuffer, this.locationsSystem['aNormal'], 3);
 			this.bindVBO(this.vertexRodBuffer, this.locationsSystem['aPosition'], 3);
 			this.bindVBO(this.colorIndexRodBuffer, this.locationsSystem['aColorIndex'], 1);
 			this.drawMode(this.elementRodBuffer, gl.TRIANGLES, this.elementRodCount);
+
+			if (this.shadowEnabled) {
+				gl.uniform1i(this.locationsSystem['isShadow'], true);
+				gl.uniformMatrix4fv(this.locationsSystem['model'], false, shadowModel);
+				this.bindVBO(this.normalRodBuffer, this.locationsSystem['aNormal'], 3);
+				this.bindVBO(this.vertexRodBuffer, this.locationsSystem['aPosition'], 3);
+				this.bindVBO(this.colorIndexRodBuffer, this.locationsSystem['aColorIndex'], 1);
+				this.drawMode(this.elementRodBuffer, gl.TRIANGLES, this.elementRodCount);
+			}
 		}
 
+		gl.uniform1i(this.locationsSystem['isShadow'], false);
+		gl.uniformMatrix4fv(this.locationsSystem['model'], false, mat4.create());
 		this.bindVBO(this.normalLeafBuffer, this.locationsSystem['aNormal'], 3);
 		this.bindVBO(this.vertexLeafBuffer, this.locationsSystem['aPosition'], 3);
 		this.bindVBO(this.colorIndexLeafBuffer, this.locationsSystem['aColorIndex'], 1);
 		this.drawMode(this.elementLeafBuffer, gl.TRIANGLES, this.elementLeafCount);
+
+		if (this.shadowEnabled) {
+			gl.uniform1i(this.locationsSystem['isShadow'], true);
+			gl.uniformMatrix4fv(this.locationsSystem['model'], false, shadowModel);
+			this.bindVBO(this.normalLeafBuffer, this.locationsSystem['aNormal'], 3);
+			this.bindVBO(this.vertexLeafBuffer, this.locationsSystem['aPosition'], 3);
+			this.bindVBO(this.colorIndexLeafBuffer, this.locationsSystem['aColorIndex'], 1);
+			this.drawMode(this.elementLeafBuffer, gl.TRIANGLES, this.elementLeafCount);
+		}
+	}
+
+	getShadowMatrix() {
+		var [lx, ly, lz] = this.background.lightPosition;
+		lx -= 100000;
+		return [
+			1, 0, 0, 0,
+			-lx/ly, 0, -lz/ly, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1
+		];
 	}
 	
 	bindVBO(buffer, location, numberElement) {
