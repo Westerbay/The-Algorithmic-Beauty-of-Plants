@@ -1,4 +1,4 @@
-class Mesh {
+class TurtleMesh {
 
 	constructor() {
 		this.verticesLine = [];

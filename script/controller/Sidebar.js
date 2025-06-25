@@ -1,7 +1,17 @@
-class Option {
+class Sidebar {
 
 	constructor(openGL) {
 		this.openGL = openGL;
+		this.presets = new Preset().generatePresetSamples();
+		this.lastLength = 0;
+		this.lastScaleDiameter = 0;
+		this.lastAngleRotation = 0;
+		this.lastAxiom = "";
+		this.lastRules = new Rules();
+		this.colorLimits = 16;
+	}
+
+	linkViews() {
 		this.rulesContainer = document.getElementById("rulesContainer");
 		this.addRuleButton = document.getElementById("addRule");
 		this.addRuleButton.onclick = () => this.addSimpleRule();
@@ -13,13 +23,10 @@ class Option {
 		this.scaleDiameterPercentInput = document.getElementById("diameter");
 		this.angleInput = document.getElementById("angle");
 		this.axiomInput = document.getElementById("axiom");
-
-		this.lastLength = 0;
-		this.lastScaleDiameter = 0;
-		this.lastAngleRotation = 0;
-		this.lastAxiom = "";
-		this.lastRules = new Rules();
-		this.colorLimits = 16;
+		this.toggleBtn = document.getElementById('toggleSidebar');
+		this.presetsSelect = document.getElementById("presets");
+		this.layout = document.getElementById('layout');		
+		this.form = document.getElementById("abop");
 		this.addEventListeners();
 	}
 
@@ -40,6 +47,21 @@ class Option {
 			this.lastScaleDiameter = parseFloat(this.scaleDiameterPercentInput.value);
 			this.draw(this.lastGeneration, this.lastLength, this.lastScaleDiameter, this.lastAngleRotation, this.lastAxiom, this.lastRules);
 		});
+		this.toggleBtn.addEventListener('click', () => {
+			this.layout.classList.toggle('collapsed');
+			const isCollapsed = this.layout.classList.contains('collapsed');
+			this.toggleBtn.setAttribute('aria-label', isCollapsed ? 'Show sidebar' : 'Hide sidebar');
+		});
+		this.presetsSelect.addEventListener('change', (e) => {
+			const value = parseInt(e.target.value);
+			this.loadPreset(this.presets[value]);
+		});
+		this.form.addEventListener("submit", (e) => {
+			e.preventDefault();
+			this.fetchDataAndDraw();		
+		});	
+		const value = parseInt(this.presetsSelect.value);
+		this.loadPreset(this.presets[value]);
 	}
 	
 	addSimpleRule(symbol="", mutation="") {
@@ -73,7 +95,7 @@ class Option {
 	
 	addColor(color = "#000000") {
 		if (this.colorStack.querySelectorAll(".color-item").length >= this.colorLimits) {
-			alert("Maximum of 16 colors reached.");
+			alert("Maximum of " + this.colorLimits + " colors reached.");
 			return;
 		}
 		
@@ -134,7 +156,6 @@ class Option {
 		
 		const lSystem = new LSystem(axiom, rules);
 		const turtleState = new TurtleState(length * 0.01, vec3.fromValues(0, 0, 0), 0, scaleDiameter * 0.01);
-		
 		const turtle = new Turtle(turtleState, angleRotation);
 		const interpreter = new Interpreter(turtle);
 		const mesh = interpreter.execute(lSystem.wordAtGeneration(generation));

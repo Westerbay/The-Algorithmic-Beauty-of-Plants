@@ -1,4 +1,4 @@
-class CanvasGL {
+class Canvas {
 
 	constructor() {
 		this.canvas = document.getElementById("glcanvas");

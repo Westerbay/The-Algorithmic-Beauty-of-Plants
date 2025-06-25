@@ -3,7 +3,7 @@ class Turtle {
 	constructor(turtleState, angleRotationDegree) {
 		this.turtleState = turtleState;
 		this.angleRotation = this._degToRad(angleRotationDegree);
-		this.mesh = new Mesh();
+		this.mesh = new TurtleMesh();
 		this.addVertexLine();
 		
 		this.currentVertexElementLine = 0;
