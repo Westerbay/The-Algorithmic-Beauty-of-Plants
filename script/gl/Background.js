@@ -11,7 +11,7 @@ class Background {
 		this.skyBackImage = this.loadImageFromBase64(skyBack64);
 		this.skyLeftImage = this.loadImageFromBase64(skyLeft64);
 		this.skyRightImage = this.loadImageFromBase64(skyRight64);
-		this.lightPosition = new Float32Array([0, 200000, 100000]);
+		this.lightPosition = new Float32Array([-100000, 200000, 100000]);
     }
 
     initSky() {
@@ -68,7 +68,5 @@ class Background {
 			img.src = base64Data; // <- contient déjà toutes les données
 		});
 	}
-
-
 
 }

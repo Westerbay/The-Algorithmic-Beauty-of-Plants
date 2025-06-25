@@ -2,15 +2,14 @@ class Turtle {
 
 	constructor(turtleState, angleRotationDegree) {
 		this.turtleState = turtleState;
-		this.angleRotation = this._degToRad(angleRotationDegree);
-		this.mesh = new TurtleMesh();
-		this.addVertexLine();
-		
+		this.angleRotation = this.degToRad(angleRotationDegree);
+		this.mesh = new TurtleMesh();	
 		this.currentVertexElementLine = 0;
 		this.currentVertexElementPolygon = 0;
 		this.recordPolygon = false;
 		this.states = [];		
 		this.polygonElements = [];
+		this.addVertexLine(); // Start point
 	}
 
 	getNormalAndTangent() {
@@ -189,7 +188,7 @@ class Turtle {
 		this.states = [];
 	}
 	
-	_degToRad(deg) {
+	degToRad(deg) {
 		return deg * Math.PI / 180;
 	}
 	
