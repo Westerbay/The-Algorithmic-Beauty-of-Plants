@@ -177,7 +177,7 @@ class Turtle {
 	}
 	
 	decrementDiameter() {
-		this.turtleState.scaleDiamater *= 0.67;
+		this.turtleState.scaleDiamater *= 0.6;
 	}
 	
 	incrementColor() {

@@ -9,6 +9,7 @@ class Canvas {
 		}		
 		this.dragging = false;
 		this.openGL = new OpenGL(this.gl);
+		this.exporter = new TurtleMeshExporter();
 		this.camera = this.openGL.camera;
 		this.sensibility = 0.005;		
 	}
@@ -41,7 +42,13 @@ class Canvas {
 
 	addEventListener() {		
 		this.downloadButton.addEventListener("click", () => {
-			alert("This feature is not implemented yet.");
+			if (this.openGL.mesh == null) {
+				alert("Please select a system");
+			}
+			else {
+				const content = this.exporter.toObj(this.openGL.mesh, this.openGL.linePrimitive);
+				this.downloadOBJ(content);
+			}
 		});
 		this.primitiveSelect.addEventListener('change', (e) => {
 			const value = parseInt(e.target.value);
@@ -131,7 +138,15 @@ class Canvas {
 			this.camera.pitch = Math.max(-limit, Math.min(limit, this.camera.pitch));
 			e.preventDefault();
 		}, { passive: false });
+	}
 
+	downloadOBJ(content, filename = 'modele.obj') {
+		const blob = new Blob([content], { type: 'text/plain' });
+		const a = document.createElement('a');
+		a.href = URL.createObjectURL(blob);
+		a.download = filename;
+		a.click();
+		URL.revokeObjectURL(a.href);
 	}
 
 	

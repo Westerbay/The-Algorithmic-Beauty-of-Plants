@@ -13,6 +13,7 @@ class OpenGL {
 		this.showGround = true;
 		this.linePrimitive = false;
 		this.shadowColor = [0, 0, 0, 0.9];
+		this.mesh = null;
 		this.initGL();
 	}
 
@@ -119,6 +120,7 @@ class OpenGL {
 	
 	loadMesh(mesh) {	
 		const gl = this.gl;		
+		this.mesh = mesh;
 		this.camera.setCenter(mesh.centerX(), mesh.centerY(), mesh.centerZ());	
 		this.camera.setMaxDepth(mesh.maxDepth());
 		this.camera.setMinHeight(mesh.minY);
