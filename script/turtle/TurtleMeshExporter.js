@@ -2,16 +2,73 @@ class TurtleMeshExporter {
 
     constructor() {}
 
-    download(content, extension) {
-		const blob = new Blob([content], { type: 'text/plain' });
-		const a = document.createElement('a');
-		a.href = URL.createObjectURL(blob);
-		a.download = `scene.${extension}`;
-		a.click();
-		URL.revokeObjectURL(a.href);
-	}
+    async downloadZip(files) {
+        const zip = new JSZip();
+        for (const [filename, content] of Object.entries(files)) {
+            zip.file(filename, content);
+        }
 
-    addLineObj(lines, vertices, normals, elements, colorIndices, offset=0, linePrimitive=false) {
+        const blob = await zip.generateAsync({ type: "blob" });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'LSystem.zip';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    async toObjAndMtl(mesh, linePrimitive, colors) {
+        var objLines = [];
+        var mtlLines = [];
+
+        for (let i = 0; i < colors.length; i += 3) {
+            const r = colors[i].toFixed(6);
+            const g = colors[i + 1].toFixed(6);
+            const b = colors[i + 2].toFixed(6);
+
+            mtlLines.push(`newmtl color${i / 3 + 1}`);
+            mtlLines.push(`Kd ${r} ${g} ${b}`);
+            mtlLines.push("");
+        }
+      
+        objLines.push("mtllib scene.mtl");
+        this._addLineObj(
+            objLines,
+            mesh.verticesLeaf,
+            mesh.normalsLeaf,
+            mesh.elementsLeaf,
+            mesh.colorIndicesLeaf
+        );
+
+        if (!linePrimitive) {
+            this._addLineObj(
+                objLines,
+                mesh.verticesRod,
+                mesh.normalsRod,
+                mesh.elementsRod,
+                mesh.colorIndicesRod,
+                mesh.verticesLeaf.length / 3
+            );
+        }
+        else {
+            this._addLineObj(
+                objLines,
+                mesh.verticesLine,
+                mesh.normalsLine,
+                mesh.elementsLine,
+                mesh.colorIndicesLine,
+                mesh.verticesLeaf.length / 3,
+                true
+            );
+        }
+
+        const files = {
+            "scene.obj": objLines.join('\n'),
+            "scene.mtl": mtlLines.join('\n')
+        };
+        await this.downloadZip(files);
+    }
+
+    _addLineObj(lines, vertices, normals, elements, colorIndices, offset=0, linePrimitive=false) {
         var lastMat = null;
         offset += 1;
         for (let i = 0; i < vertices.length; i += 3) {
@@ -54,55 +111,6 @@ class TurtleMeshExporter {
                 lines.push(line);
             }
         }        
-    }
-
-    toObjAndMtl(mesh, linePrimitive, colors) {
-        var objLines = [];
-        var mtlLines = [];
-
-        for (let i = 0; i < colors.length; i += 3) {
-            const r = colors[i].toFixed(6);
-            const g = colors[i + 1].toFixed(6);
-            const b = colors[i + 2].toFixed(6);
-
-            mtlLines.push(`newmtl color${i / 3 + 1}`);
-            mtlLines.push(`Kd ${r} ${g} ${b}`);
-            mtlLines.push("");
-        }
-      
-        objLines.push("mtllib scene.mtl");
-        this.addLineObj(
-            objLines,
-            mesh.verticesLeaf,
-            mesh.normalsLeaf,
-            mesh.elementsLeaf,
-            mesh.colorIndicesLeaf
-        );
-
-        if (!linePrimitive) {
-            this.addLineObj(
-                objLines,
-                mesh.verticesRod,
-                mesh.normalsRod,
-                mesh.elementsRod,
-                mesh.colorIndicesRod,
-                mesh.verticesLeaf.length / 3
-            );
-        }
-        else {
-            this.addLineObj(
-                objLines,
-                mesh.verticesLine,
-                mesh.normalsLine,
-                mesh.elementsLine,
-                mesh.colorIndicesLine,
-                mesh.verticesLeaf.length / 3,
-                true
-            );
-        }
-
-        this.download(objLines.join('\n'), 'obj');
-        this.download(mtlLines.join('\n'), 'mtl');
     }
 
 }
