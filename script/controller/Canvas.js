@@ -46,8 +46,7 @@ class Canvas {
 				alert("Please select a system");
 			}
 			else {
-				const content = this.exporter.toObj(this.openGL.mesh, this.openGL.linePrimitive);
-				this.downloadOBJ(content);
+				this.exporter.toObjAndMtl(this.openGL.mesh, this.openGL.linePrimitive, this.openGL.colors);
 			}
 		});
 		this.primitiveSelect.addEventListener('change', (e) => {
@@ -139,16 +138,6 @@ class Canvas {
 			e.preventDefault();
 		}, { passive: false });
 	}
-
-	downloadOBJ(content, filename = 'modele.obj') {
-		const blob = new Blob([content], { type: 'text/plain' });
-		const a = document.createElement('a');
-		a.href = URL.createObjectURL(blob);
-		a.download = filename;
-		a.click();
-		URL.revokeObjectURL(a.href);
-	}
-
 	
 	resizeCanvasToDisplaySize() {
 		const canvas = this.gl.canvas;
