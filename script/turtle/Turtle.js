@@ -9,51 +9,7 @@ class Turtle {
 		this.recordPolygon = false;
 		this.states = [];		
 		this.polygonElements = [];
-		this.addVertexLine(); // Start point
-	}
-
-	getNormalAndTangent() {
-		const normal = [
-			this.turtleState.orientation[6],
-			this.turtleState.orientation[7],
-			this.turtleState.orientation[8]
-		];
-		const tangent = [
-			this.turtleState.orientation[3],
-			this.turtleState.orientation[4],
-			this.turtleState.orientation[5]
-		];
-		return { normal, tangent };
-	}
-
-	addVertexPolygon() {
-		const { normal, tangent } = this.getNormalAndTangent();
-		this.mesh.addVertexPolygon(
-			vec3.clone(this.turtleState.position),
-			this.turtleState.colorIndex,
-			normal,
-			tangent
-		);
-	}
-
-	addVertexLine() {
-		const { normal, tangent } = this.getNormalAndTangent();
-		this.mesh.addVertexLine(
-			vec3.clone(this.turtleState.position),
-			this.turtleState.colorIndex,
-			normal,
-			tangent
-		);
-	}
-
-	addVertexRod() {
-		const { normal, tangent } = this.getNormalAndTangent();
-		this.mesh.addVertexRod(
-			vec3.clone(this.turtleState.position),
-			this.turtleState.colorIndex,
-			normal,
-			tangent
-		);
+		this._addVertexLine(); // Start point
 	}
 	
 	moveForward() {
@@ -75,12 +31,12 @@ class Turtle {
 		vec3.add(this.turtleState.position, this.turtleState.position, delta);
 		
 		if (this.recordPolygon) {
-			this.addVertexPolygon();
+			this._addVertexPolygon();
 			this.polygonElements.push(this.currentVertexElementPolygon);
 			this.currentVertexElementPolygon ++;
 		}
 		else {
-			this.addVertexLine();
+			this._addVertexLine();
 			this.currentVertexElementLine ++;
 		}		
 	}
@@ -190,6 +146,50 @@ class Turtle {
 	
 	degToRad(deg) {
 		return deg * Math.PI / 180;
+	}
+
+	_getNormalAndTangent() {
+		const normal = [
+			this.turtleState.orientation[6],
+			this.turtleState.orientation[7],
+			this.turtleState.orientation[8]
+		];
+		const tangent = [
+			this.turtleState.orientation[3],
+			this.turtleState.orientation[4],
+			this.turtleState.orientation[5]
+		];
+		return { normal, tangent };
+	}
+
+	_addVertexPolygon() {
+		const { normal, tangent } = this._getNormalAndTangent();
+		this.mesh.addVertexPolygon(
+			vec3.clone(this.turtleState.position),
+			this.turtleState.colorIndex,
+			normal,
+			tangent
+		);
+	}
+
+	_addVertexLine() {
+		const { normal, tangent } = this._getNormalAndTangent();
+		this.mesh.addVertexLine(
+			vec3.clone(this.turtleState.position),
+			this.turtleState.colorIndex,
+			normal,
+			tangent
+		);
+	}
+
+	_addVertexRod() {
+		const { normal, tangent } = this._getNormalAndTangent();
+		this.mesh.addVertexRod(
+			vec3.clone(this.turtleState.position),
+			this.turtleState.colorIndex,
+			normal,
+			tangent
+		);
 	}
 	
 }
