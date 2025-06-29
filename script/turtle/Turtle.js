@@ -26,19 +26,9 @@ class Turtle {
 	moveForwardWithoutDrawing() {
 		const direction = vec3.fromValues(this.turtleState.orientation[0], this.turtleState.orientation[1], this.turtleState.orientation[2]);
 		const delta = vec3.create();
-		
 		vec3.scale(delta, direction, this.turtleState.length);
 		vec3.add(this.turtleState.position, this.turtleState.position, delta);
-		
-		if (this.recordPolygon) {
-			this._addVertexPolygon();
-			this.polygonElements.push(this.currentVertexElementPolygon);
-			this.currentVertexElementPolygon ++;
-		}
-		else {
-			this._addVertexLine();
-			this.currentVertexElementLine ++;
-		}		
+		this._recordNewVertex();	
 	}
 	
 	turn(angleRotation) {
@@ -138,6 +128,8 @@ class Turtle {
 	
 	incrementColor() {
 		this.turtleState.colorIndex ++;
+		this._recordNewVertex();
+		this.turtleState.lastVertexElementLine = this.currentVertexElementLine;
 	}
 	
 	cutOffRemainderBranch() {
@@ -146,6 +138,18 @@ class Turtle {
 	
 	degToRad(deg) {
 		return deg * Math.PI / 180;
+	}
+
+	_recordNewVertex() {
+		if (this.recordPolygon) {
+			this._addVertexPolygon();
+			this.polygonElements.push(this.currentVertexElementPolygon);
+			this.currentVertexElementPolygon ++;
+		}
+		else {
+			this._addVertexLine();
+			this.currentVertexElementLine ++;
+		}	
 	}
 
 	_getNormalAndTangent() {
