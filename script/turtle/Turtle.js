@@ -114,7 +114,7 @@ class Turtle {
 	}
 	
 	completePolygon() {
-		this.mesh.addPolygon(this.polygonElements);
+		this.mesh.addPolygon(this.polygonElements, this.turtleState.length);
 		this.recordPolygon = false;
 		this.polygonElements = [];
 	}

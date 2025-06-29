@@ -23,7 +23,7 @@ class Shader {
                 vec3 bitangent = normalize(cross(normal, tangent));
 
                 vTBN = mat3(tangent, bitangent, normal);
-                fragPos.y -= 0.001; //Does not overlapp shadow
+                fragPos.y -= 0.01; //Does not overlapp shadow
                 vFragPos = fragPos;
                 vUV = aUV;
                 gl_Position = cameraMatrix * vec4(fragPos, 1.0);

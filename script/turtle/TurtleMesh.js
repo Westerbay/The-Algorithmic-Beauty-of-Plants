@@ -64,7 +64,7 @@ class TurtleMesh {
 		this.elementsLine.push(endIdx);	
 	}
 	
-	addPolygon(indices) {
+	addPolygon(indices, length) {
 		if (indices.length < 3) return;
 
 		const verts = [];
@@ -99,7 +99,7 @@ class TurtleMesh {
 		const nLen = Math.hypot(avgNormal[0], avgNormal[1], avgNormal[2]);
 		avgNormal = [avgNormal[0]/nLen, avgNormal[1]/nLen, avgNormal[2]/nLen];
 
-		const epsilon = 1e-4;
+		const epsilon = length * 1e-2;
 		const vertsBack = verts.map(v => [
 			v[0] - avgNormal[0]*epsilon,
 			v[1] - avgNormal[1]*epsilon,
