@@ -1,7 +1,7 @@
 #toggleSidebar {
     position: absolute;
     top: 50%;
-    right: 280px;
+    right: 330px;
     transform: translateY(-50%);
     
     width: 50px;
