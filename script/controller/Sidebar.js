@@ -27,6 +27,10 @@ class Sidebar {
 		this.presetsSelect = document.getElementById("presets");
 		this.layout = document.getElementById('layout');		
 		this.form = document.getElementById("abop");
+		this.lSystemOptions = document.getElementById("lSystemOptions");
+		this.colorDiv = document.getElementById("colorDiv");
+		this.ruleDiv = document.getElementById("ruleDiv");
+		this.axiomDiv = document.getElementById("axiomDiv");
 		this.addEventListeners();
 	}
 
@@ -60,6 +64,13 @@ class Sidebar {
 			e.preventDefault();
 			this.fetchDataAndDraw();		
 		});	
+		this.lSystemOptions.addEventListener('click', (e) => {
+			e.preventDefault();
+			this.lSystemOptions.classList.toggle('hidden');
+			this.colorDiv.classList.toggle('hidden');
+			this.axiomDiv.classList.toggle('hidden');
+			this.ruleDiv.classList.toggle('hidden');
+		});
 		const value = parseInt(this.presetsSelect.value);
 		this.loadPreset(this.presets[value]);
 	}
@@ -75,8 +86,7 @@ class Sidebar {
 		inputSymbol.value = symbol;
 		inputSymbol.required = true;
 		
-		const inputMutation = document.createElement("input");
-		inputMutation.type = "text";
+		const inputMutation = document.createElement("textarea");
 		inputMutation.placeholder = "FF-[-F+F+F]+[+F-F-F]";
 		inputMutation.value = mutation;
 		inputMutation.required = true;
@@ -173,13 +183,16 @@ class Sidebar {
 		
 		const rules = new Rules();
 		document.querySelectorAll("#rulesContainer .rule-row").forEach(row => {
-			const inputs = row.querySelectorAll("input");
-			if (inputs.length >= 2) {
-				const symbol = inputs[0].value.trim();
-				const mutation = inputs[1].value.trim();
-				if (symbol && mutation) {
-					rules.addSimpleRule(symbol, mutation);
-				}
+			const input = row.querySelector("input");
+			const textarea = row.querySelector("textarea");
+
+			if (!input || !textarea) return;
+
+			const symbol = input.value.trim();
+			const mutation = textarea.value.trim();
+
+			if (symbol && mutation) {
+				rules.addSimpleRule(symbol, mutation);
 			}
 		});
 		

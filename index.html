@@ -89,7 +89,6 @@
 							<option value="3">3D Tree</option>
 						</select>
 					</aside>
-					<button type="submit">Draw</button>
 					<aside>
 						<label for="generation">Generation :</label>
 						<input type="number" id="generation" name="generation" min="0" step="1" required>
@@ -106,20 +105,22 @@
 						<label for="angle">Angle (°) :</label>
 						<input type="number" id="angle" name="angle" step="any" required>
 					</aside>
-					<aside>
+					<button id="lSystemOptions">LSystem options</button>
+					<aside id="axiomDiv" class="hidden">
 						<label for="axiom">Axiom :</label>
 						<input type="text" id="axiom" name="axiom" required>
 					</aside>
-					<aside>
+					<aside id="ruleDiv" class="hidden">
 						<label for="addRule">Rules :</label>
 						<div id="rulesContainer" class="rules-table"></div>
-						<button type="button" class="add-btn" id="addRule">Add a rule</button>
+						<button type="button" class="add-btn" id="addRule">Add a rule +</button>
 					</aside>
-					<aside>
+					<aside id="colorDiv" class="hidden">
 						<label for="addColor">Color stack :</label>
 						<div id="colorStack" class="color-stack"></div>
-						<button type="button" class="add-btn" id="addColor">Add a color</button>
+						<button type="button" class="add-btn" id="addColor">Add a color +</button>
 					</aside>
+					<button type="submit" id="submit">Draw</button>
 				</form>
 			</section>
 		</div>

@@ -1,6 +1,6 @@
 #sidebar {
 	background-color: #ffffff;
-	padding: 1em;
+	padding: 2em;
 	border-right: 1px solid #ccc;
 	display: flex;
 	flex-direction: column;
@@ -41,14 +41,12 @@
 	border-radius: 4px;
 }
 
-#sidebar button.add-btn {
-	background-color: #28a745;
-	color: white;
-	font-weight: bold;
+#sidebar textarea {
+	resize: vertical;
+	font-size: 1.2em; 
+	width: 100%;
 }
 
-#sidebar button.add-btn:hover,
-#sidebar button.remove-btn:hover,
 .color-item input {
 	cursor: pointer;
 }
@@ -58,7 +56,6 @@
 	border: none;
 	color: #c00;
 	font-size: 1.2em;
-	cursor: pointer;
 }
 
 #sidebar .rule-row {
@@ -66,14 +63,6 @@
 	grid-template-columns: 30px 1fr auto;
 	align-items: center;
 	gap: 0.5em;
-	width: 100%;
-}
-
-#sidebar .rule-row input[type="text"]:first-child {
-	width: 100%;
-}
-
-#sidebar .rule-row input[type="text"]:nth-child(2) {
 	width: 100%;
 }
 
@@ -97,4 +86,27 @@
 #sidebar h2 {
 	text-align: center;
 	margin: 1em;
+}
+
+#sidebar button {
+	font-weight: bold;
+	cursor: pointer;
+	background-color: #444444;
+	color: white;
+}
+
+#sidebar aside.hidden {
+	display: none;
+}
+
+#lSystemOptions::after{
+	content: " ▼";
+}
+
+#lSystemOptions.hidden::after{
+	content: " ▲";
+}
+
+#sidebar button#submit {
+	background-color: #e95245;
 }
