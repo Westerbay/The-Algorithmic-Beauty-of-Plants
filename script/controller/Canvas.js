@@ -25,6 +25,7 @@ class Canvas {
 		this.rotateButton = document.getElementById("rotate");
 		this.downloadButton = document.getElementById("download");
 		this.primitiveSelect = document.getElementById("primitive");
+		this.downloadFormatSelect = document.getElementById("downloadFormat");
 		this.initCameraInteraction();
 		this.loadCheckedCache();		
 		this.addEventListener();
@@ -46,8 +47,14 @@ class Canvas {
 				alert("Please select a system");
 			}
 			else {
-				this.exporter.toObjAndMtl(this.openGL.mesh, this.openGL.colors);
-				//this.exporter.toPly(this.openGL.mesh, this.openGL.colors);
+				switch (parseInt(this.downloadFormatSelect.value)) {
+					case 0:
+						this.exporter.toObjAndMtl(this.openGL.mesh, this.openGL.colors);
+						break;
+					case 1:
+						this.exporter.toPly(this.openGL.mesh, this.openGL.colors);
+						break;
+				}
 			}
 		});
 		this.primitiveSelect.addEventListener('change', (e) => {
