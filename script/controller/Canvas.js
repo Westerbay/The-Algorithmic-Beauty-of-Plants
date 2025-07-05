@@ -46,7 +46,8 @@ class Canvas {
 				alert("Please select a system");
 			}
 			else {
-				this.exporter.toObjAndMtl(this.openGL.mesh, this.openGL.linePrimitive, this.openGL.colors);
+				this.exporter.toObjAndMtl(this.openGL.mesh, this.openGL.colors);
+				//this.exporter.toPly(this.openGL.mesh, this.openGL.colors);
 			}
 		});
 		this.primitiveSelect.addEventListener('change', (e) => {
