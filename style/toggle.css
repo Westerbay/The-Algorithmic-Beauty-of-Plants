@@ -1,7 +1,7 @@
 #toggleSidebar {
     position: absolute;
     top: 50%;
-    right: 330px;
+    left: 330px;
     transform: translateY(-50%);
     
     width: 50px;
@@ -23,26 +23,25 @@
     transition: all 1s ease;
 }
 
-#toggleSidebar:hover,
-#toggleSidebar:focus {
+#toggleSidebar:hover {
     background-color: #0056b3;
     outline: none;
     transform: translateY(-50%) scale(1.05);
 }
 
 #toggleSidebar::after {
-    content: '❯❯';
+    content: '❮❮';
     display: block;
     text-align: center;
     transition: transform 0.3s;
 }
 
 #layout.collapsed #toggleSidebar::after {
-    content: '❮❮';
+    content: '❯❯';
 }
 
 #layout.collapsed #toggleSidebar {
-    right: 10px;
+    left: 10px;
 }
 
 @media (max-width: 700px) {

@@ -11,16 +11,20 @@ body, html {
 
 #layout {
 	display: grid;
-	grid-template-columns: 1fr 350px;
-	height: 100vh;
+	grid-template-columns: 350px 1fr;
 	position: relative;
 	overflow-x: hidden;
 }
 
 #layout.collapsed {
-	grid-template-columns: 1fr 0;
+	grid-template-columns: 0 1fr;
 }
 
+@media (min-width: 700px) {
+	#layout {
+		height: 100vh;
+	}
+}
 @media (max-width: 700px) {
 	#layout {
 		display: block;

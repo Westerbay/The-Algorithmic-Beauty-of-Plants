@@ -23,6 +23,11 @@
 	border-right: 1px solid #ccc;
 }
 
+#sidebar {
+	grid-row: 1;
+	grid-column: 1;
+}
+
 #sidebar form {
 	display: flex;
 	flex-direction: column;

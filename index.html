@@ -35,96 +35,104 @@
 		<script src="script/controller/Canvas.js"></script>
 		<script src="script/controller/Sidebar.js"></script>
 
+		<script src="https://westerbay.github.io/Home-Page/script/skull.js"></script>		
+		<link href='https://westerbay.github.io/Home-Page/style/skull.css' rel='stylesheet'>
+		<link href='https://westerbay.github.io/Home-Page/style/header.css' rel='stylesheet'>
+		<link href='https://westerbay.github.io/Home-Page/style/footer.css' rel='stylesheet'>
+
 		<link href='style/skull.css' rel='stylesheet'>
 		<link href='style/canvas.css' rel='stylesheet'>
 		<link href='style/sidebar.css' rel='stylesheet'>
 		<link href='style/toggle.css' rel='stylesheet'>
 	</head>
 	<body>
-		<div id="layout">
-			<button id="toggleSidebar" aria-label="Hide sidebar">
-				<span class="icon"></span>
-			</button>
-			<aside id="overlay">
-				<canvas id="glcanvas"></canvas>
-				<div class="checkboxes bottom-left">						
-					<label><input type="checkbox" id="sky" checked>Sky</label>
-					<label><input type="checkbox" id="ground" checked>Ground</label>
-					<label><input type="checkbox" id="lighting" checked>Lighting</label>
-					<label><input type="checkbox" id="shadow" checked>Shadow</label>
-					<label><input type="checkbox" id="rotate" checked>Rotate</label>
-				</div>
+		<div id="main">
+			<div id="layout">
+				<button id="toggleSidebar" aria-label="Hide sidebar">
+					<span class="icon"></span>
+				</button>
+				<aside id="overlay">
+					<canvas id="glcanvas"></canvas>
+					<div class="checkboxes bottom-left">						
+						<label><input type="checkbox" id="sky" checked>Sky</label>
+						<label><input type="checkbox" id="ground" checked>Ground</label>
+						<label><input type="checkbox" id="lighting" checked>Lighting</label>
+						<label><input type="checkbox" id="shadow" checked>Shadow</label>
+						<label><input type="checkbox" id="rotate" checked>Rotate</label>
+					</div>
 
-				<div class="buttons bottom-right">					
-					<img src="img/plus.png" alt="+" class="icon-btn" id="zoom">
-					<img src="img/minus.png" alt="-" class="icon-btn" id="dezoom">
-					<img src="img/center.png" alt="Center" class="icon-btn" id="resetCamera">
-				</div>
+					<div class="buttons bottom-right">					
+						<img src="img/plus.png" alt="+" class="icon-btn" id="zoom">
+						<img src="img/minus.png" alt="-" class="icon-btn" id="dezoom">
+						<img src="img/center.png" alt="Center" class="icon-btn" id="resetCamera">
+					</div>
 
-				<div class="button top-right">
-					<select id="downloadFormat">
-						<option value="0" selected>3D (.obj)</option>
-						<option value="1">3D (.ply)</option>
-					</select>
-					<img src="img/download.png" alt="Download" class="icon-btn" id="download">
-				</div>
-
-				<div class="button top-left">
-					<select id="primitive">
-						<option value="0">2D Lines</option>
-						<option value="1" selected>3D Rods</option>
-					</select>
-				</div>
-			</aside>
-
-			<section id="sidebar">
-				<h2>LSystems</h2>
-				<form id="abop">
-					<aside>
-						<label for="presets">Presets :</label>
-						<select id="presets">
-							<option value="0">2D Plant</option>
-							<option value="1">3D Hilbert curve</option>
-							<option value="2">3D Flower</option>
-							<option value="3">3D Tree</option>
+					<div class="button top-right">
+						<select id="downloadFormat">
+							<option value="0" selected>3D (.obj)</option>
+							<option value="1">3D (.ply)</option>
 						</select>
-					</aside>
-					<aside>
-						<label for="generation">Generation :</label>
-						<input type="number" id="generation" name="generation" min="0" step="1" required>
-					</aside>
-					<aside>
-						<label for="length">Length (cm) :</label>
-						<input type="number" id="length" name="length" min="0" step="any" required>
-					</aside>
-					<aside>
-						<label for="length">Diameter (% of length) :</label>
-						<input type="number" id="diameter" name="length" min="0" step="any" required>
-					</aside>
-					<aside>
-						<label for="angle">Angle (°) :</label>
-						<input type="number" id="angle" name="angle" step="any" required>
-					</aside>
-					<button id="lSystemOptions">LSystem options</button>
-					<aside id="axiomDiv" class="hidden">
-						<label for="axiom">Axiom :</label>
-						<input type="text" id="axiom" name="axiom" required>
-					</aside>
-					<aside id="ruleDiv" class="hidden">
-						<label for="addRule">Rules :</label>
-						<div id="rulesContainer" class="rules-table"></div>
-						<button type="button" class="add-btn" id="addRule">Add a rule +</button>
-					</aside>
-					<aside id="colorDiv" class="hidden">
-						<label for="addColor">Color stack :</label>
-						<div id="colorStack" class="color-stack"></div>
-						<button type="button" class="add-btn" id="addColor">Add a color +</button>
-					</aside>
-					<button type="submit" id="submit">Draw</button>
-				</form>
-			</section>
+						<img src="img/download.png" alt="Download" class="icon-btn" id="download">
+					</div>
+
+					<div class="button top-left">
+						<select id="primitive">
+							<option value="0">2D Lines</option>
+							<option value="1" selected>3D Rods</option>
+						</select>
+					</div>
+				</aside>
+
+				<div id="sidebar">
+					<h2>LSystems</h2>
+					<form id="abop">
+						<aside>
+							<label for="presets">Presets :</label>
+							<select id="presets">
+								<option value="0">2D Plant</option>
+								<option value="1">3D Hilbert curve</option>
+								<option value="2">3D Flower</option>
+								<option value="3">3D Tree</option>
+							</select>
+						</aside>
+						<aside>
+							<label for="generation">Generation :</label>
+							<input type="number" id="generation" name="generation" min="0" step="1" required>
+						</aside>
+						<aside>
+							<label for="length">Length (cm) :</label>
+							<input type="number" id="length" name="length" min="0" step="any" required>
+						</aside>
+						<aside>
+							<label for="length">Diameter (% of length) :</label>
+							<input type="number" id="diameter" name="length" min="0" step="any" required>
+						</aside>
+						<aside>
+							<label for="angle">Angle (°) :</label>
+							<input type="number" id="angle" name="angle" step="any" required>
+						</aside>
+						<button id="lSystemOptions">LSystem options</button>
+						<aside id="axiomDiv" class="hidden">
+							<label for="axiom">Axiom :</label>
+							<input type="text" id="axiom" name="axiom" required>
+						</aside>
+						<aside id="ruleDiv" class="hidden">
+							<label for="addRule">Rules :</label>
+							<div id="rulesContainer" class="rules-table"></div>
+							<button type="button" class="add-btn" id="addRule">Add a rule +</button>
+						</aside>
+						<aside id="colorDiv" class="hidden">
+							<label for="addColor">Color stack :</label>
+							<div id="colorStack" class="color-stack"></div>
+							<button type="button" class="add-btn" id="addColor">Add a color +</button>
+						</aside>
+						<button type="submit" id="submit">Draw</button>
+					</form>
+				</div>
+			</div>
 		</div>
 		<script src="script/main.js"></script>
+		<script>load("Project");</script>
 	</body>
 </html>
 
