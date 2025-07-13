@@ -6,7 +6,7 @@ function main() {
 	canvas.startRenderLoop();
 	setTimeout(() => {
         canvas.openGL.texture.initTextures();
-    }, 100);
+    }, 500);
 }
 
 document.addEventListener("DOMContentLoaded", main);
