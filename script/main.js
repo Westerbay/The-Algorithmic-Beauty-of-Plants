@@ -4,9 +4,9 @@ function main() {
 	sidebar.linkViews();
 	canvas.linkViews();
 	canvas.startRenderLoop();
-	window.addEventListener("load", () => {
+	setTimeout(() => {
         canvas.openGL.texture.initTextures();
-    });
+    }, 100);
 }
 
 document.addEventListener("DOMContentLoaded", main);
