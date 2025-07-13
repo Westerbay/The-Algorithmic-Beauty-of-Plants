@@ -4,6 +4,9 @@ function main() {
 	sidebar.linkViews();
 	canvas.linkViews();
 	canvas.startRenderLoop();
+	window.addEventListener("load", () => {
+        canvas.openGL.texture.initTextures();
+    });
 }
 
 document.addEventListener("DOMContentLoaded", main);

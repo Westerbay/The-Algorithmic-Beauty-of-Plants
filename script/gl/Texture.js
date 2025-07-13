@@ -4,7 +4,6 @@ class Texture {
         this.gl = gl;
         this.background = background;
         this.ready = false;
-		this.initTextures();
     }
 
     enableAnisotropicFilter(texture) {
