@@ -300,16 +300,16 @@ export function LSystem({
     setDraft((current) => ({ ...current, [field]: value }))
   }
 
-  function changePreset(nextPreset: PresetId, draw = false) {
+  function changePreset(nextPreset: PresetId) {
     const next = getPreset(nextPreset)
     setPreset(nextPreset)
     setDraft(copyDefinition(next))
-    if (draw) setDefinition(copyDefinition(next))
+    setDefinition(copyDefinition(next))
   }
 
   function nextPreset() {
     const index = PRESETS.findIndex((item) => item.id === preset)
-    changePreset(PRESETS[(index + 1) % PRESETS.length]!.id, true)
+    changePreset(PRESETS[(index + 1) % PRESETS.length]!.id)
   }
 
   async function download() {
@@ -441,7 +441,12 @@ export function LSystem({
         </div>
 
         {controls === "full" && (
-          <div className="lsystem-panel">
+          <div
+            className="lsystem-panel"
+            role="region"
+            aria-label={m.parameters}
+            tabIndex={0}
+          >
             <form className="lsystem-form" onSubmit={submit} noValidate>
               <div className="lsystem-panel-heading">
                 <h2>{m.parameters}</h2>

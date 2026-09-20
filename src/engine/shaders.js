@@ -22,7 +22,6 @@ export class Shader {
                 vec3 bitangent = normalize(cross(normal, tangent));
 
                 vTBN = mat3(tangent, bitangent, normal);
-                fragPos.y -= 0.01; //Does not overlapp shadow
                 vFragPos = fragPos;
                 vUV = aUV;
                 gl_Position = cameraMatrix * vec4(fragPos, 1.0);
@@ -82,6 +81,7 @@ export class Shader {
 			uniform mat4 cameraMatrix;
 			uniform vec3 colorStack[16];
 			uniform int colorStackLength;
+            uniform bool isShadow;
 			
 			varying vec3 fragColor;
             varying vec3 vNormal;
@@ -94,6 +94,7 @@ export class Shader {
                 vNormal = aNormal;
                 vFragPos = fragPos;
 				gl_Position = cameraMatrix * vec4(fragPos, 1.0);
+                if (isShadow) gl_Position.z -= 0.00002 * gl_Position.w;
 			}
 		`
   }

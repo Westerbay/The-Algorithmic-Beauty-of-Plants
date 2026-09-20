@@ -2,6 +2,7 @@ import { mat4 } from "gl-matrix"
 import { Camera } from "./camera.js"
 import { Background } from "./background.js"
 import { Shader } from "./shaders.js"
+import { createShadowMatrix } from "./shadow.js"
 import { loadImage, loadTextureSources } from "./texture-loader.js"
 
 export class Renderer {
@@ -23,6 +24,8 @@ export class Renderer {
     this.mesh = null
     this.colors = new Float32Array([0.5, 0.5, 0.5])
     this.modelGround = mat4.create()
+    this.shadowMatrix = mat4.create()
+    this.hasStencil = gl.getContextAttributes()?.stencil === true
     this.disposed = false
     this.uintIndices = !!gl.getExtension("OES_element_index_uint")
     try {
@@ -171,6 +174,10 @@ export class Renderer {
     )
     this.camera.setGeometryBounds(mesh)
     mat4.fromTranslation(this.modelGround, [0, mesh.minY, 0])
+    this.shadowMatrix = createShadowMatrix(
+      this.background.lightPosition,
+      mesh.minY,
+    )
   }
 
   setOptions(options) {
@@ -313,7 +320,7 @@ export class Renderer {
     gl.clearColor(
       ...(dark ? [0.145, 0.145, 0.145, 1] : [0.973, 0.969, 0.957, 1]),
     )
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT)
     this.camera.rotate = this.options.autoRotate
     const [skyMatrix, worldMatrix] = this.camera.computeMatrices(
       gl.canvas.width,
@@ -357,29 +364,20 @@ export class Renderer {
     gl.uniform1i(u.isShadow, false)
     gl.uniformMatrix4fv(u.model, false, mat4.create())
     drawMesh()
-    if (this.options.shadows && this.options.ground) {
-      const [lx, ly, lz] = this.background.lightPosition
-      const shadow = mat4.fromValues(
-        1,
-        0,
-        0,
-        0,
-        -lx / ly,
-        0,
-        -lz / ly,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        this.mesh.minY,
-        0,
-        1,
-      )
+    if (this.options.shadows) {
+      // Blend overlapping projected branches/leaves once, while keeping the
+      // opaque model in front. A stencil attachment needs no texture download.
+      if (this.hasStencil) {
+        gl.enable(gl.STENCIL_TEST)
+        gl.stencilFunc(gl.EQUAL, 0, 0xff)
+        gl.stencilOp(gl.KEEP, gl.KEEP, gl.INCR)
+        gl.depthMask(false)
+      }
       gl.uniform1i(u.isShadow, true)
-      gl.uniformMatrix4fv(u.model, false, shadow)
+      gl.uniformMatrix4fv(u.model, false, this.shadowMatrix)
       drawMesh()
+      gl.depthMask(true)
+      if (this.hasStencil) gl.disable(gl.STENCIL_TEST)
     }
   }
 

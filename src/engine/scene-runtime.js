@@ -15,7 +15,11 @@ export function createSceneRuntime(canvas, initialOptions) {
   const document = canvas.ownerDocument
   const window = document.defaultView
   if (!window) throw new Error("A scene requires a mounted browser canvas.")
-  const gl = canvas.getContext("webgl", { antialias: true, alpha: false })
+  const gl = canvas.getContext("webgl", {
+    antialias: true,
+    alpha: false,
+    stencil: true,
+  })
   if (!gl) throw new Error("WebGL is unavailable in this browser.")
   let options = { ...DEFAULTS, ...initialOptions }
   let disposed = false

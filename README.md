@@ -20,7 +20,7 @@ The standalone explorer contains only the scene and its controls. It has no back
 The package is distributed as a versioned GitHub release asset. It is not published to the npm registry.
 
 ```sh
-pnpm add https://github.com/Westerbay/The-Algorithmic-Beauty-of-Plants/releases/download/v0.1.0/westerbay-lsystem-react-0.1.0.tgz
+pnpm add https://github.com/Westerbay/The-Algorithmic-Beauty-of-Plants/releases/download/v0.1.1/westerbay-lsystem-react-0.1.1.tgz
 ```
 
 React and React DOM 18.3 or 19 are peer dependencies. Use a bundler that supports ES modules and CSS imports.
@@ -56,7 +56,7 @@ A compact scene fits its parent height:
 </div>
 ```
 
-For full mode, set the CSS custom property `--lsystem-height` on a parent to size the viewport. The form adapts to the component width. Styles are scoped to the component; there is no global CSS reset.
+For full mode, set the CSS custom property `--lsystem-height` on a parent to size the viewport. The form adapts to the component width and scrolls independently, so opening sections does not resize the canvas. On narrow layouts the panel sits below the scene; its bounded height can be adjusted with the --lsystem-panel-height CSS custom property. Styles are scoped to the component; there is no global CSS reset.
 
 ```tsx
 import { getPreset, type LSystemDefinition } from "@westerbay/lsystem-react"
@@ -70,7 +70,7 @@ const definition: LSystemDefinition = {
 <LSystem initialDefinition={definition} onDefinitionChange={console.log} />
 ```
 
-Definitions use centimetres for length, degrees for angle and a percentage of length for branch diameter. Changing initialPreset or initialDefinition resets the editor to that source; form edits stay local until Draw is pressed. The callbacks do not make this a controlled input.
+Definitions use centimetres for length, degrees for angle and a percentage of length for branch diameter. Changing initialPreset or initialDefinition resets the editor to that source; choosing a preset renders it immediately, while manual form edits stay local until Draw is pressed. The callbacks do not make this a controlled input.
 
 ## Custom element
 

@@ -1,6 +1,6 @@
 {
   "name": "@westerbay/lsystem-react",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A reusable React L-system editor and custom WebGL plant renderer.",
   "type": "module",
   "license": "GPL-3.0-only",

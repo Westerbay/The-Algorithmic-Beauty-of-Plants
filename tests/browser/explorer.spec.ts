@@ -151,3 +151,99 @@ for (const width of [320, 768, 1440, 2560]) {
     await page.screenshot({ path: info.outputPath("help.png"), fullPage: true })
   })
 }
+
+for (const width of [390, 1440]) {
+  test(
+    "parameter sections scroll without resizing the scene at " + width,
+    async ({ page }) => {
+      await page.setViewportSize({ width, height: 900 })
+      await page.goto("./")
+      await ready(page)
+      const size = () =>
+        page.locator("canvas").evaluate((canvas: HTMLCanvasElement) => ({
+          width: canvas.clientWidth,
+          height: canvas.clientHeight,
+          pixelsWide: canvas.width,
+          pixelsHigh: canvas.height,
+          editorHeight: canvas.closest(".lsystem-layout")!.clientHeight,
+        }))
+      const before = await size()
+      const panel = page.getByRole("region", {
+        name: "Parameters",
+        exact: true,
+      })
+      await panel.getByText("Axiom, rules and colours", { exact: true }).click()
+      await panel.locator(".lsystem-options summary").click()
+      await panel
+        .getByRole("button", { name: "Add a rule", exact: true })
+        .click()
+      await expect.poll(size).toEqual(before)
+      expect(
+        await panel.evaluate(
+          (element) => element.scrollHeight > element.clientHeight,
+        ),
+      ).toBe(true)
+      await panel.evaluate((element) => {
+        element.scrollTop = 0
+      })
+      await panel.hover()
+      const documentScroll = await page.evaluate(() => window.scrollY)
+      await page.mouse.wheel(0, 500)
+      await expect
+        .poll(() => panel.evaluate((element) => element.scrollTop))
+        .toBeGreaterThan(0)
+      expect(await page.evaluate(() => window.scrollY)).toBe(documentScroll)
+      expect(await size()).toEqual(before)
+      await panel
+        .getByRole("button", { name: "Symbol guide", exact: true })
+        .click()
+      await expect(page.getByRole("dialog")).toBeVisible()
+      await page.keyboard.press("Escape")
+      await expect(
+        page.getByRole("button", { name: "Symbol guide", exact: true }),
+      ).toBeFocused()
+    },
+  )
+}
+
+test("generation count stays legible over the scene in both themes", async ({
+  page,
+}) => {
+  await page.goto("./")
+  await ready(page)
+  for (const theme of ["light", "dark"] as const) {
+    await page.emulateMedia({ colorScheme: theme })
+    await expect(page.locator(".lsystem")).toHaveAttribute("data-theme", theme)
+    const appearance = await page
+      .locator(".lsystem-scene-label > :last-child")
+      .evaluate((element) => {
+        const style = getComputedStyle(element)
+        return {
+          color: style.color,
+          background: style.backgroundColor,
+          size: Number.parseFloat(style.fontSize),
+        }
+      })
+    const luminance = (css: string) => {
+      const channels = css
+        .match(/[\d.]+/g)!
+        .slice(0, 3)
+        .map(Number)
+        .map((value) => value / 255)
+        .map((value) =>
+          value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4,
+        )
+      return (
+        channels[0]! * 0.2126 + channels[1]! * 0.7152 + channels[2]! * 0.0722
+      )
+    }
+    const foreground = luminance(appearance.color),
+      background = luminance(appearance.background)
+    expect(
+      (Math.max(foreground, background) + 0.05) /
+        (Math.min(foreground, background) + 0.05),
+    ).toBeGreaterThanOrEqual(4.5)
+    expect(appearance.background).not.toContain("rgba")
+    expect(appearance.size).toBeGreaterThanOrEqual(13)
+  }
+})
