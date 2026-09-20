@@ -1,0 +1,43 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+  background: #fffefc;
+  color: #252525;
+}
+body {
+  margin: 0;
+}
+.demo-shell {
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 44px);
+}
+.demo-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.demo-topline h1 {
+  margin: 0;
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 500;
+}
+.demo-topline button {
+  border: 1px solid #dedcd7;
+  background: transparent;
+  color: inherit;
+  padding: 9px 14px;
+  cursor: pointer;
+  font: inherit;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    background: #1b1b1b;
+    color: #ededed;
+  }
+  .demo-topline button {
+    border-color: #3b3b3b;
+  }
+}

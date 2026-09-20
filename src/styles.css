@@ -1,0 +1,688 @@
+.lsystem {
+  --lsystem-bg: #fffefc;
+  --lsystem-panel: #f8f7f4;
+  --lsystem-ink: #292724;
+  --lsystem-muted: #706b64;
+  --lsystem-line: #dedbd5;
+  --lsystem-accent: #e99245;
+  --lsystem-focus: #a35a1c;
+  --lsystem-error: #963b30;
+  color: var(--lsystem-ink);
+  background: var(--lsystem-bg);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  min-width: 0;
+  isolation: isolate;
+  color-scheme: light;
+  container-type: inline-size;
+}
+
+.lsystem[data-theme="dark"] {
+  --lsystem-bg: #1b1b1b;
+  --lsystem-panel: #252525;
+  --lsystem-ink: #f0ece6;
+  --lsystem-muted: #b3aea6;
+  --lsystem-line: #45413b;
+  --lsystem-accent: #eaa566;
+  --lsystem-focus: #eaa566;
+  --lsystem-error: #efaa96;
+  color-scheme: dark;
+}
+
+.lsystem *,
+.lsystem *::before,
+.lsystem *::after {
+  box-sizing: border-box;
+}
+
+.lsystem .lsystem-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--lsystem-panel-width, 320px);
+  align-items: start;
+  border: 1px solid var(--lsystem-line);
+  background: var(--lsystem-panel);
+}
+
+.lsystem .lsystem-viewport {
+  position: relative;
+  min-width: 0;
+  height: var(--lsystem-height, clamp(520px, 68vh, 720px));
+  overflow: hidden;
+  background: var(--lsystem-bg);
+}
+
+.lsystem[data-controls="full"] .lsystem-viewport {
+  position: sticky;
+  top: 16px;
+}
+
+.lsystem .lsystem-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.lsystem .lsystem-canvas:active {
+  cursor: grabbing;
+}
+
+.lsystem .lsystem-scene-label {
+  position: absolute;
+  top: 20px;
+  inset-inline: 22px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--lsystem-muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+.lsystem .lsystem-scene-label > :first-child {
+  text-transform: uppercase;
+}
+
+.lsystem .lsystem-instruction {
+  position: absolute;
+  left: 20px;
+  right: 180px;
+  bottom: 22px;
+  color: var(--lsystem-muted);
+  font-size: 11px;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+.lsystem .lsystem-camera-controls {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--lsystem-line);
+  background: var(--lsystem-bg);
+}
+
+.lsystem .lsystem-icon-button,
+.lsystem .lsystem-button,
+.lsystem .lsystem-text-button,
+.lsystem .lsystem-colour-remove {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 8px;
+  margin: 0;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--lsystem-ink);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0;
+  box-shadow: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+
+.lsystem .lsystem-icon-button {
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+}
+
+.lsystem .lsystem-icon-button:hover,
+.lsystem .lsystem-text-button:hover,
+.lsystem .lsystem-colour-remove:hover {
+  background: var(--lsystem-panel);
+  border-color: var(--lsystem-line);
+}
+
+.lsystem .lsystem-button {
+  min-height: 42px;
+  padding: 10px 16px;
+  background: var(--lsystem-accent);
+  color: #26211b;
+  font-weight: 600;
+}
+
+.lsystem .lsystem-button:hover {
+  border-color: var(--lsystem-ink);
+}
+
+.lsystem .lsystem-text-button {
+  min-height: 34px;
+  padding: 6px 3px;
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.lsystem button:disabled,
+.lsystem input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.lsystem button:focus-visible,
+.lsystem input:focus-visible,
+.lsystem textarea:focus-visible,
+.lsystem select:focus-visible,
+.lsystem summary:focus-visible,
+.lsystem canvas:focus-visible {
+  outline: 2px solid var(--lsystem-focus);
+  outline-offset: 3px;
+}
+
+.lsystem .lsystem-canvas:focus-visible {
+  outline-offset: -4px;
+}
+
+.lsystem .lsystem-panel {
+  min-width: 0;
+  padding: 24px;
+  border-inline-start: 1px solid var(--lsystem-line);
+  background: var(--lsystem-bg);
+}
+
+.lsystem .lsystem-panel-heading,
+.lsystem .lsystem-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.lsystem .lsystem-panel-heading h2,
+.lsystem .lsystem-dialog-heading h2 {
+  margin: 0;
+  color: var(--lsystem-ink);
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.lsystem .lsystem-form,
+.lsystem .lsystem-definition-fields,
+.lsystem .lsystem-options-fields {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+  margin: 0;
+}
+
+.lsystem .lsystem-form .lsystem-panel-heading {
+  margin-bottom: 0;
+}
+
+.lsystem .lsystem-field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  margin: 0;
+  color: var(--lsystem-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.lsystem .lsystem-field input,
+.lsystem .lsystem-field select,
+.lsystem .lsystem-rule input,
+.lsystem .lsystem-rule textarea,
+.lsystem .lsystem-export select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--lsystem-line);
+  border-radius: 0;
+  color: var(--lsystem-ink);
+  background: var(--lsystem-panel);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: none;
+}
+
+.lsystem .lsystem-number-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px 12px;
+}
+
+.lsystem .lsystem-number-grid .lsystem-field {
+  align-content: end;
+}
+
+.lsystem .lsystem-details {
+  min-width: 0;
+  border-top: 1px solid var(--lsystem-line);
+  margin: 0;
+}
+
+.lsystem .lsystem-details > summary {
+  padding: 14px 0;
+  color: var(--lsystem-ink);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+.lsystem .lsystem-details > summary::marker {
+  color: var(--lsystem-muted);
+  font-size: 9px;
+}
+
+.lsystem .lsystem-definition-fields {
+  padding-bottom: 8px;
+}
+
+.lsystem .lsystem-rule-fields,
+.lsystem .lsystem-colour-fields {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.lsystem .lsystem-rule-fields legend,
+.lsystem .lsystem-colour-fields legend {
+  margin: 0 0 10px;
+  padding: 0;
+  color: var(--lsystem-muted);
+  font-size: 12px;
+}
+
+.lsystem .lsystem-rule {
+  display: grid;
+  grid-template-columns: 34px 12px minmax(0, 1fr) 26px;
+  align-items: start;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.lsystem .lsystem-rule input,
+.lsystem .lsystem-rule textarea {
+  padding: 9px 6px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 11px;
+}
+
+.lsystem .lsystem-rule-symbol {
+  text-align: center;
+}
+
+.lsystem .lsystem-rule textarea {
+  resize: vertical;
+  min-height: 60px;
+  overflow-wrap: anywhere;
+}
+
+.lsystem .lsystem-rule-arrow {
+  padding-top: 10px;
+  color: var(--lsystem-muted);
+  font-size: 12px;
+}
+
+.lsystem .lsystem-rule .lsystem-icon-button {
+  width: 26px;
+  height: 36px;
+  padding: 5px;
+}
+
+.lsystem .lsystem-colours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.lsystem .lsystem-colour {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--lsystem-line);
+}
+
+.lsystem .lsystem-colour input {
+  width: 36px;
+  height: 36px;
+  padding: 2px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.lsystem .lsystem-colour-remove {
+  width: 24px;
+  height: 36px;
+  padding: 5px;
+}
+
+.lsystem .lsystem-draw {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.lsystem .lsystem-draw > span {
+  font-size: 19px;
+  font-weight: 400;
+}
+
+.lsystem .lsystem-options {
+  margin-top: 22px;
+}
+
+.lsystem .lsystem-options-fields {
+  gap: 16px;
+  padding-bottom: 18px;
+}
+
+.lsystem .lsystem-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px 8px;
+}
+
+.lsystem .lsystem-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: var(--lsystem-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.lsystem .lsystem-toggle input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--lsystem-accent);
+}
+
+.lsystem .lsystem-export {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding-top: 18px;
+  border-top: 1px solid var(--lsystem-line);
+}
+
+.lsystem .lsystem-help-trigger {
+  position: relative;
+}
+
+.lsystem .lsystem-info-button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--lsystem-line);
+  border-radius: 50%;
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-style: italic;
+}
+
+.lsystem .lsystem-tooltip {
+  position: absolute;
+  z-index: 2;
+  bottom: calc(100% + 9px);
+  right: 0;
+  width: max-content;
+  max-width: 220px;
+  padding: 6px 9px;
+  border: 1px solid var(--lsystem-line);
+  color: var(--lsystem-ink);
+  background: var(--lsystem-bg);
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms;
+}
+
+.lsystem .lsystem-help-trigger:hover .lsystem-tooltip,
+.lsystem .lsystem-help-trigger:focus-within .lsystem-tooltip {
+  opacity: 1;
+}
+
+.lsystem .lsystem-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(660px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 28px;
+  overflow: auto;
+  border: 1px solid var(--lsystem-line);
+  color: var(--lsystem-ink);
+  background: var(--lsystem-bg);
+  font: inherit;
+  box-shadow: 0 16px 70px rgb(0 0 0 / 18%);
+}
+
+.lsystem-dialog::backdrop {
+  background: rgb(18 17 15 / 55%);
+}
+
+.lsystem .lsystem-dialog-heading {
+  margin-bottom: 18px;
+}
+
+.lsystem .lsystem-dialog-heading h2 {
+  font-size: 23px;
+}
+
+.lsystem .lsystem-dialog > p {
+  margin: 0 0 18px;
+  color: var(--lsystem-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.lsystem .lsystem-command-table {
+  width: 100%;
+  margin: 24px 0;
+  border-collapse: collapse;
+  color: var(--lsystem-ink);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.lsystem .lsystem-command-table th,
+.lsystem .lsystem-command-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--lsystem-line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.lsystem .lsystem-command-table thead th {
+  color: var(--lsystem-muted);
+  font-weight: 400;
+}
+
+.lsystem .lsystem-command-table tbody th {
+  width: 95px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.lsystem .lsystem-command-table code {
+  color: var(--lsystem-ink);
+  background: transparent;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+}
+
+.lsystem .lsystem-dialog .lsystem-help-note {
+  margin: 0;
+  padding: 12px;
+  background: var(--lsystem-panel);
+  font-size: 12px;
+}
+
+.lsystem .lsystem-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 8px 12px;
+  color: var(--lsystem-muted);
+  background: var(--lsystem-bg);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.lsystem .lsystem-scene-error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--lsystem-bg);
+}
+
+.lsystem .lsystem-error {
+  width: 100%;
+  max-width: 420px;
+  padding: 14px;
+  border: 1px solid var(--lsystem-line);
+  background: var(--lsystem-panel);
+  color: var(--lsystem-error);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.lsystem .lsystem-error > p {
+  margin: 0 0 12px;
+  font: inherit;
+  line-height: 1.6;
+}
+
+.lsystem .lsystem-error-details {
+  margin-top: 12px;
+  color: var(--lsystem-muted);
+  font-size: 11px;
+}
+
+.lsystem .lsystem-error-details summary {
+  cursor: pointer;
+}
+
+.lsystem .lsystem-error-details p {
+  margin: 8px 0 0;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 11px;
+}
+
+.lsystem .lsystem-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lsystem[data-controls="compact"],
+.lsystem[data-controls="none"] {
+  height: 100%;
+  min-height: 0;
+}
+
+.lsystem[data-controls="compact"] .lsystem-layout,
+.lsystem[data-controls="none"] .lsystem-layout {
+  display: block;
+  height: 100%;
+  border: 0;
+}
+
+.lsystem[data-controls="compact"] .lsystem-viewport,
+.lsystem[data-controls="none"] .lsystem-viewport {
+  height: 100%;
+  min-height: 0;
+}
+
+.lsystem[data-controls="compact"] .lsystem-instruction {
+  right: 180px;
+}
+
+@container (max-width: 780px) {
+  .lsystem[data-controls="full"] .lsystem-viewport {
+    position: relative;
+    top: auto;
+  }
+
+  .lsystem .lsystem-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lsystem .lsystem-viewport {
+    height: var(--lsystem-height, 520px);
+  }
+
+  .lsystem .lsystem-panel {
+    border-inline-start: 0;
+    border-top: 1px solid var(--lsystem-line);
+  }
+
+  .lsystem .lsystem-rule {
+    grid-template-columns: 45px 15px minmax(0, 1fr) 32px;
+    gap: 8px;
+  }
+}
+
+@container (max-width: 420px) {
+  .lsystem .lsystem-panel {
+    padding: 20px;
+  }
+
+  .lsystem .lsystem-viewport {
+    height: var(--lsystem-height, 460px);
+  }
+
+  .lsystem .lsystem-scene-label {
+    inset-inline: 16px;
+    top: 16px;
+  }
+
+  .lsystem .lsystem-instruction,
+  .lsystem[data-controls="compact"] .lsystem-instruction {
+    left: 16px;
+    right: 16px;
+    bottom: 65px;
+    max-width: 230px;
+  }
+
+  .lsystem .lsystem-dialog {
+    padding: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lsystem *,
+  .lsystem *::before,
+  .lsystem *::after {
+    transition: none;
+    animation: none;
+  }
+}

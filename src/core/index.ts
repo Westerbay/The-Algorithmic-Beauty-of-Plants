@@ -1,0 +1,7 @@
+export { DefinitionError, validateDefinition } from "./definition.ts"
+export type { DefinitionErrorCode } from "./definition.ts"
+export { expandDefinition } from "./expand.ts"
+export { generateGeometry } from "./geometry.ts"
+export { TurtleMesh } from "./TurtleMesh.ts"
+export { PRESETS, getPreset } from "./presets.ts"
+export * from "./limits.ts"

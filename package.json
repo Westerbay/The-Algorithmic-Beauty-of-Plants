@@ -1,0 +1,73 @@
+{
+  "name": "@westerbay/lsystem-react",
+  "version": "0.1.0",
+  "description": "A reusable React L-system editor and custom WebGL plant renderer.",
+  "type": "module",
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Westerbay/The-Algorithmic-Beauty-of-Plants.git"
+  },
+  "homepage": "https://westerbay.github.io/The-Algorithmic-Beauty-of-Plants/",
+  "files": [
+    "dist/library",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/library/index.d.ts",
+      "import": "./dist/library/index.js"
+    },
+    "./element": {
+      "types": "./dist/library/element.d.ts",
+      "import": "./dist/library/element.js"
+    },
+    "./styles.css": "./dist/library/styles.css"
+  },
+  "main": "./dist/library/index.js",
+  "module": "./dist/library/index.js",
+  "types": "./dist/library/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 4176 --strictPort",
+    "build:lib": "vite build --config vite.library.config.ts && tsc -p tsconfig.build.json",
+    "build:demo": "vite build",
+    "build": "pnpm build:lib && pnpm build:demo",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "playwright test",
+    "format": "prettier --write src demo tests *.json *.ts *.md .github",
+    "format:check": "prettier --check src demo tests *.json *.ts *.md .github",
+    "check": "pnpm format:check && pnpm typecheck && pnpm test && pnpm build",
+    "preview": "vite preview --host 127.0.0.1 --port 4176 --strictPort"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0 || ^19.0.0",
+    "react-dom": "^18.3.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "gl-matrix": "3.4.4",
+    "jszip": "3.10.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "24.5.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6",
+    "prettier": "3.8.3",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "tsx": "^4.20.6",
+    "typescript": "5.9.3",
+    "vite": "^8"
+  },
+  "packageManager": "pnpm@12.4.1",
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

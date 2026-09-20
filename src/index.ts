@@ -1,0 +1,5 @@
+import "./styles.css"
+export { LSystem } from "./react/LSystem"
+export type { LSystemProps } from "./react/LSystem"
+export { PRESETS, getPreset } from "./core/presets"
+export type { LSystemDefinition, PresetId, SceneOptions, Locale } from "./types"
